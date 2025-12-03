@@ -1,0 +1,204 @@
+
+\setlength{\marginparpush}{0.7zw}
+% \renewcommand\_{\textunderscore\allowbreak}
+\DeclareEmphSequence{\usefont{T1}{lmr}{b}{n}\usefont{JY2}{hgt}{m}{n}\selectfont,\usefont{T1}{lmr}{b}{it}\usefont{JY2}{hgt}{b}{n}\selectfont}
+\pretocmd{\sidenote}{\<\eghostguarded{}}{}{}
+\pretocmd{\_}{\allowbreak}{}{}
+
+\newcommand{\docDate}{Ver.1.0［2025年12月3日］}
+\newcommand{\otfVersion}{2025-07-24 TeX JP org, v1.7b8 psitau, u0.32 ttk}
+\newcommand{\docLicense}{\hfill{\copyright} 2025 Yarakashi Kikohshi -- \parbox[t]{66.5pt}{CC BY-NC 4.0 \\[0.5zw]\hfil\href{https://creativecommons.org/licenses/by-nc/4.0/}{\includegraphics[width=2cm]{doclicense-CC-by-nc-88x31.pdf}}\hfil}}
+
+\makeatletter
+\newcommand{\toc@dot@small}{\begin{tikzpicture} \useasboundingbox (0, 0) rectangle (4pt, 0); \fill  (2.4pt ,0.37zw) circle[radius=0.08zw]; \end{tikzpicture}}
+\def\@dottedtocline#1#2#3#4#5{%
+  \ifnum #1>\c@tocdepth \else
+    \jlreq@set@top@contents{#1}%
+    \vskip\toclineskip
+    {\leftskip #2\relax \rightskip \@tocrmarg \parfillskip -\rightskip
+    \parindent #2\relax\@afterindenttrue
+    \interlinepenalty\@M
+    \leavevmode
+    \@lnumwidth #3\relax
+    \@tempcnta=#1\relax
+    \advance\@tempcnta by -\jlreq@top@contents
+    \@tempdima=1\jlreq@mol
+    \multiply \@tempdima by \@tempcnta
+    \advance\leftskip \@lnumwidth \hbox{}\hskip -\leftskip
+    \advance\leftskip\@tempdima
+    {#4}\nobreak
+    \leaders\hbox{$\m@th\mkern \@dotsep mu$\null\inhibitglue \toc@dot@small\inhibitglue\null$\m@th\mkern \@dotsep mu$}%
+    % \leaders\hbox{$\m@th\mkern \@dotsep mu$\null\inhibitglue ・\inhibitglue\null$\m@th\mkern \@dotsep mu$}%
+    \hfill\nobreak
+    \hb@xt@\@pnumwidth{\hss\normalfont\normalcolor \tatechuyoko*{#5}}%
+    \par}%
+  \fi
+}
+\makeatother
+
+\usepackage{jslogo}
+\usepackage{hologo}
+\usepackage{array}
+\newcolumntype{C}[1]{>{\centering\arraybackslash}p{#1}}
+\usepackage{booktabs}
+\usepackage[inline]{enumitem}
+\setlist[enumerate,1]{
+  label=\protect\ajMaru{\arabic{*}},
+  labelsep = 1em,
+  leftmargin = 3em
+}
+\setlist[description,1]{
+  font=\ttfamily,
+  % font=\gtfamily\mdseries,
+  labelindent=!,
+  itemindent=-8zw,
+  leftmargin=10zw
+}
+\setlist[itemize, 1]{
+  label=\raisebox{0.2zw}{\textbullet},
+  labelsep = 0.3zw
+}
+\setlist[itemize, 2]{
+  % label=\raisebox{0.2zw}{\textbullet},
+  labelsep = 0.3zw
+}
+\usepackage{bxghost}
+\usepackage{fancyhdr}
+\renewcommand{\headrulewidth}{0.0pt}
+\usepackage{verbatim}
+\usepackage{tablericons}
+\usepackage{tcolorbox}
+\tcbuselibrary{skins, breakable}
+\usepackage{xcolor}
+\usepackage{ninecolors}
+\usepackage{hyperref}
+\hypersetup{colorlinks,urlcolor=blue3, linkcolor=blue3}
+
+\NewDocumentEnvironment{booktabular}{ m s }{\begin{tabular}[t]{#1}\toprule}{\bottomrule\end{tabular}}
+\NewExpandableDocumentCommand{\thead}{ O{1} m }{\multicolumn{#1}{c}{\small\sffamily\gtfamily #2}}
+\NewDocumentCommand{\textlrangle}{ s m }{{\rmfamily\mdseries\textlangle\nobreak\IfBooleanTF{#1}{\jpincmd{#2}}{#2}\nobreak\textrangle}}
+\NewDocumentCommand{\jpincmd}{ s m }{\IfBooleanT{#1}{\inhibitkanjiskip}{\jafontsize{8.5pt}{15pt}\selectfont #2}\IfBooleanT{#1}{\inhibitkanjiskip}}
+\newcommand{\inhibitkanjiskip}{\mbox{}}
+\newcommand{\terminalCMD}[1]{\texttt{#1}}
+
+\newcommand{\ptmfamily}{\fontfamily{ptm}\selectfont}
+\newcommand{\ShiftJIS}{{\ptmfamily Shift\nobreak\texttt{\raisebox{0.2zw}{\textunderscore}}\nobreak JIS}}
+\NewDocumentCommand{\AdobeJapan}{ o }{{\ptmfamily Adobe-Japan1\IfNoValueF{#1}{-#1}}}
+\newcommand{\CTAN}{{\ptmfamily CTAN}}
+\newcommand{\UCN}[1]{\texttt{U+#1}}
+\newcommand{\CIDN}[1]{\texttt{CID+#1}}
+\newcommand{\subCIDN}[1]{\textsubscript{(\texttt{CID+#1})}}
+\newcommand{\env}[1]{\texttt{#1}環境}
+
+\newcommand{\氏}{{\footnotesize 氏}}
+\newcommand{\LuaTeX}{\hologo{LuaTeX}}
+\newcommand{\TeXLive}{{\TeX} Live}
+\newcommand{\TeXWiki}{{\TeX} Wiki}
+\newcommand{\GitHub}{\textsf{\bfseries GitHub}}
+\newcommand{\Unicode}{\textsf{Unicode}}
+\newcommand{\dvipdfmx}{\terminalCMD{dvipdfmx}}
+\newcommand{\DIVPDFMx}{DVIPDFM\nobreak\( x \)}
+\NewDocumentCommand{\upLaTeXdvipdfmx}{ s }{\IfBooleanTF{#1}{\upLaTeX*\inhibitkanjiskip＋\inhibitkanjiskip\terminalCMD{dvipdfmx}}{\upLaTeX\inhibitkanjiskip＋\inhibitkanjiskip\terminalCMD{dvipdfmx}}}
+
+\newcommand{\filePath}[1]{\eghostguarded{\texttt{#1}}}
+\newcommand{\inlinecode}[1]{\eghostguarded{\fboxsep=1pt\fcolorbox{gray8}{white}{\texttt{#1}}}}
+\newcommand{\kanjiVS}[2]{\inlinecode{\jpincmd{#1}\textbackslash symbol\{"#2\}}}
+\newcommand{\kanjiUTF}[2]{\inlinecode{\jpincmd{#1}\textlrangle{\UCN{#2}}}}
+\newcommand{\subUCN}[1]{\nobreak\textsubscript{(\texttt{U+#1})}}
+\newcommand{\vspaceLine}{\vspace{-0.5zw}}
+
+\newcommand{\jpinurl}{\jafontsize{8.5pt}{15pt}\selectfont}
+\newcommand{\itemSet}[2]{\(\left. \parbox{#1}{#2} \right\}\)}
+\newcommand{\texqa}[1]{\sidenote{\href{https://okumuralab.org/tex/mod/forum/discuss.php?d=#1}{{\TeX} Forum\,\##1}}}
+\newcommand{\texqawithoutSN}[1]{\href{https://okumuralab.org/tex/mod/forum/discuss.php?d=#1}{{\TeX} Forum\,\##1}}
+\newcommand{\otfUpdate}[2]{\sidenote{\parbox[t]{10zw}{\href{https://okumuralab.org/tex/mod/forum/discuss.php?d=#2}{{\TeX} Forum\, \#\textsf{#2}}\\ (#1)}}}
+\newcommand{\textfrac}[2]{\( \bigl(\displaystyle\frac{\raisebox{-0.3zw}{\text{\scriptsize\gtfamily #1}}}{\raisebox{0.3zw}{\text{\scriptsize\gtfamily #2}}}\bigr) \)}
+\NewDocumentCommand{\middots}{ O{1zw} }{\raisebox{#1}{\dots}}
+\newcommand{\brtab}[1]{\par\tabto{#1}}
+
+\makeatletter
+\let\@@upLaTeX\upLaTeX
+\RenewDocumentCommand{\upLaTeX}{ s }{\IfBooleanTF{#1}{({\kern-.1em}u{\kern-.1em}){\kern-.03em}\pLaTeX}{\@@upLaTeX}}
+\makeatother
+
+\ExplSyntaxOn
+\newlength{\urltabprewidth}
+
+\NewDocumentCommand{\urltab}{ o m }{
+  \\\icon{arrow-forward}\IfNoValueF{#1}{\icon{#1}}
+  \settowidth{\urltabprewidth}{\icon{arrow-forward}\IfNoValueF{#1}{\icon{#1}}}
+  \parbox[t]{\dimexpr \linewidth - \urltabprewidth}
+    {\setlength{\baselineskip}{1zw}#2}
+}
+
+\newenvironment{texsource}
+  {\endgraf\noindent\small\verbatim}
+  {\endverbatim}
+
+\newenvironment{terminal}
+  {\endgraf\noindent\small\verbatim}
+  {\endverbatim}
+
+\NewTColorBox{demosource}{ s o }{colback=gray9, left=0.5zw, top=0pt, bottom=0pt, after~skip=0.7zw, before~skip=0.7zw, sidebyside, fontupper=\ttfamily\small, fontlower=\rmfamily\normalsize, IfBooleanTF={#1}{halign~lower=center, right*=0.7zw, sidebyside~gap=0.7zw}{sidebyside~gap=1zw}, IfNoValueTF={#2}{righthand~ratio=0.4,}{righthand~ratio=#2}, colbacklower=white, skin=bicolor, colframe=gray9, leftlower=0.2zw, }
+\newtcolorbox{tcb@texsource}{enhanced~jigsaw, frame~empty, colback=gray9, left=1zw, top=0pt, bottom=0pt, after~skip=0.7zw, before~skip=0.7zw, breakable=true}
+\newtcolorbox{tcb@terminal}{enhanced~jigsaw, frame~empty, colback=gray2, coltext=white, left=0.5zw, top=0pt, bottom=0pt, after~skip=0.7zw, before~skip=0.7zw, breakable=true}
+\newtcolorbox{directory}{before~upper=\setlength{\baselineskip}{13pt}, frame~empty, colback=green2, coltext=white, left=0.5zw, top=0pt, bottom=0pt, after~skip=0.7zw, before~skip=0.7zw, fontupper=\ttfamily}
+
+\AddToHook{env/texsource/before}{\begin{tcb@texsource}}
+\AddToHook{env/texsource/after}{\end{tcb@texsource}}
+\AddToHook{env/terminal/before}{\begin{tcb@terminal}}
+\AddToHook{env/terminal/after}{\end{tcb@terminal}}
+
+% \AddToHook{env/center/before}{\medskip}
+\AddToHook{env/center/after}{\bigskip}
+
+\NewDocumentCommand{ \cmd }{ s m }{
+  \IfBooleanTF{#1}
+    {\uline{\eghostguarded{\texttt{\textbackslash #2}}}}
+    {\eghostguarded{\texttt{\textbackslash #2}}}
+}
+\NewDocumentCommand{ \pkg }{ s t{+} m }{
+  \IfBooleanTF{#1}
+    {\textsf{#3}}
+    {
+      \IfBooleanTF{#2}
+        {\href{https:\/\/ctan.org\/pkg\/#3}{\textsf{#3}}}
+        {\textsf{#3}}
+      パッケージ
+    }
+}
+\NewDocumentCommand{ \cls }{ s t{+} m }{
+  \IfBooleanTF{#1}
+    {\textsf{#3}}
+    {
+      \IfBooleanTF{#2}
+        {\href{https:\/\/ctan.org\/pkg\/#3}{\textsf{#3}}}
+        {\textsf{#3}}
+      文書クラス
+    }
+}
+\NewDocumentCommand{ \opt }{ s m }{
+  \IfBooleanTF{#1}
+    {\texttt{#2}}
+    {
+      \texttt{#2}%
+      オプション
+    }
+}
+\NewDocumentCommand{\icon}{ m O{1.2zw} }{
+  \eghostguarded{}
+  \tablericon[height={#2/-0.3zw}]{
+    \str_case:nnF { #1 }
+    {
+      { pdf }    { file -type -pdf }
+      { text }   { file -text }
+      % { text }   { file -typography }
+      { github } { brand -github }
+      { link }   { external -link }
+    }{ #1 }
+  }
+  \nobreakspace
+}
+\ExplSyntaxOff
+
+\NewPageStyle{cover}{nombre={}}

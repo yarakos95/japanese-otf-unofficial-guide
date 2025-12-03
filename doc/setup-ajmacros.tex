@@ -1,0 +1,66 @@
+\usepackage{bxpapersize}
+\usepackage[pass]{geometry}
+\usepackage[T1]{fontenc}
+\usepackage[deluxe, multi, jis2004]{otf}
+\usepackage{IBMpsJP}
+\usepackage{amsmath}
+\usepackage{plext}
+\usepackage{pxrubrica}
+\usepackage{multicol}
+\usepackage{multirow}
+\usepackage{tabto}
+\usepackage{gckanbun}
+\usepackage{diagbox}
+\usepackage{graphicx}
+
+\input{setup-base.tex}
+
+\ExplSyntaxOn
+
+\NewDocumentCommand{ \ajFS }{ s m m }{%
+  \IfBooleanT{#1}%
+    {\colorbox{gray9}}%
+  {\ibmfamily\ajFrac{#2}{#3}, \ajFrac*{#2}{#3}}%
+  }%
+
+\NewDocumentCommand{ \ajAS }{ s m }
+{%
+  {\ibmfamily \ajArrow{#2}}%
+  &%
+  \texttt{#2}%
+  \IfBooleanF{#1}%
+    {\hfill{\scriptsize(\cmd{ajArrow#2})}}%
+}
+
+\NewDocumentCommand{\ajLigKumimoji}{ s m m }
+{%
+  #2%
+  & {\ibmfamily\ajLig{#2}}%
+  \IfBooleanT{#1}{& {\ibmfamily\ajLig{#2*}}}%
+  & {\ibmfamily\raisebox{0.1zw}{\parbox<t>{1zw}{\ajLig{#2}}}}%
+  \IfBooleanT{#1}{& {\ibmfamily\raisebox{0.1zw}{\parbox<t>{1zw}{\ajLig{#2*}}}}}%
+}%
+\newcommand{\ajLigPunc}[1]{#1 & {\ibmfamily\ajLig{#1}}}
+\NewDocumentCommand{ \ajLigKana }{ s m }{#2 & \IfBooleanT{#1}{\ibmfamily}\ajLig{#2}}
+\NewDocumentCommand{ \ajPS }{ s t{+} m }
+{
+  {\ibmfamily\ajPICT{#3}}
+  &
+  \IfBooleanTF{#2}
+    {
+      \texttt{#3}
+      \IfBooleanF{#1}
+        {\hfill{\scriptsize(\cmd{ajPICT{\jpincmd* {#3}}})}}
+    }
+    {
+      \texttt{#3}
+      \IfBooleanF{#1}
+        {\hfill{\scriptsize(\cmd{ajPICT#3})}}
+    }
+}
+\ExplSyntaxOff
+
+\newcommand{\tabularColor}{gray9}
+\renewcommand{\thepage}{\large\ibmfamily\ajLabel\ajMaru{page}}
+
+\listfiles

@@ -1,0 +1,165 @@
+\documentclass[../otf-unofficial-guide]{subfiles}
+\begin{document}
+
+\section{\texorpdfstring{\cmd{UTF}と\cmd{CID}}{{\textbackslash}UTFと{\textbackslash}CID}}
+
+\pkg*{japanese-otf}が提供する主要コマンドは2つです。
+
+\begin{itemize}
+  \item \cmd{UTF\{\textlrangle{{\Unicode} 16進数値}\}}
+        \tabto{15zw} {\Unicode}値で文字を指定するコマンド
+  \item \cmd{CID\{\textlrangle{CID値}\}}
+        \tabto{15zw} CID値で文字を指定するコマンド
+\end{itemize}
+
+\cmd{UTF}は16進の{\Unicode}値で表現します。{\TeXWiki}等では4桁とされていますが、サロゲートペアな文字を表現する5桁\sidenote{例えば「𠮷」は{\Unicode}で\UCN{20BB7}と表現されます。}でもきちんと出力されます。この\cmd{UTF}で入力された文字は\opt{jis2004}の影響を受けます。
+
+\cmd{CID}は5桁以下のCID値で指定します。CIDは{\AdobeJapan}に準拠します。CID値は以下のリンクから\icon{pdf}\filePath{Adobe-Japan1-7.pdf}を参照してください。
+\sidenote{有料ではありますが、BOOTHに\href{https://booth.pm/ja/items/924828}{CIDグリフ一覧表}と言う資料があります。追補6までの対応ではありますが、追補7との違いは令和の合字（2グリフ）の有無だけなので、有用性は変わらないものと思います。}
+
+\begin{itemize}
+  \item Adobe-Japan1: The Adobe-Japan1-7 Character Collection
+  \urltab[github]{\url{https://github.com/adobe-type-tools/Adobe-Japan1}}
+\end{itemize}
+
+以下に「\UTF{86F8}」に関して\cmd{UTF}と\cmd{CID}による入力方法と結果を示します。
+
+\begin{demosource}
+  {\textbackslash}UTF\{86F8\}、
+  {\textbackslash}CID\{2909\}、
+  {\textbackslash}CID\{7733\}。
+  \tcblower
+  \large
+  \UTF{86F8}、
+  \CID{2909}、
+  \CID{7733}。
+\end{demosource}
+
+この例では、\cmd{UTF}では1つの字形を指定することになりますが、\cmd{CID}では同じ文字でありながら異なる字形を指定できます。
+
+\subsection{{\Unicode}値の検索方法}
+
+\cmd{UTF}に必要な{\Unicode}値は{\ptmfamily UTF-8}等によって{\Unicode}のコードポイントから変換された値ではなく、{\Unicode}のコードポイントそのものです。
+
+{\Unicode}値（{\Unicode}コードポイント）を知るには、{\ptmfamily Unicode.org}が提供するUnicodeSetを利用すると便利です。
+
+\begin{itemize}
+  \item {\ptmfamily UnicodeSet}
+  \urltab{\url{https://util.unicode.org/UnicodeJsps/list-unicodeset.jsp}}
+\end{itemize}
+
+\textsf{Input}に必要な文字を入力して\textsf{Show Set}ボタンをクリックすることで、\textsf{Input}内の文字に応じた情報を取得できます。\eghostguarded{\texttt{U+}}に続く形で表現されている値が{\Unicode}値です。
+
+ただし、「\ajVar{葛}\textsubscript{(\UCN{845B}\,{+}\,\UCN{E0100})}」
+\sidenote{PDF上の見た目は\ajVar{葛}ですが、\UCN{845B}にマッピングされています。}%
+を{\ptmfamily UnicodeSet}で表示させようとすると、基底文字となる\UCN{845B}と異体字セレクタの\UCN{E0100}の2文字分が表示されます。
+しかし、\cmd{UTF}では2文字分の{\Unicode}値を受け付けません。そのため、異体字セレクタを含むような文字を\cmd{UTF}で出力することは出来ません。
+
+一方で、{\upLaTeXdvipdfmx}下の\pkg{otf}では異体字セレクタを用いた異体字の指定が可能です。\sidenote{\texqawithoutSN{3905}：SVS、IVSの両方可}
+
+\newpage
+\subsection{CID値の検索方法}
+
+{\Unicode}値を知るのは比較的簡単ですが、CID値を知るにはちょっと厄介です。先に示した\icon{pdf}\filePath{Adobe-Japan1-7.pdf}からCID値を知ることはできますが、実際のところファイル内で文字検索が出来ません。およそ2.3万グリフが一覧となっている表から目で探すには実用性に欠けます。\sidenote{{\AdobeJapan}には{\Unicode}に登録されている文字の他もさまざまな文字が集録されています。これらの文字を\cmd{CID}で入力したい（ただし、\pkg{ajmacros}からコマンドが提供されていない）場合、\icon{pdf}\filePath{Adobe-Japan1-7.pdf}から目で探す必要があります。}
+
+一方で、\pkg{ajmacros}を利用すれば、ほとんどの記号は\cmd{CID}を利用せずに入力できます。そのため、多くの場合で異体字を入力したい場合にCID値を知りたいことになります。
+そこで、ある文字の異体字とそのCID値を知る方法として、以下の異体字早見表を使ってみましょう。
+
+\begin{itemize}
+  \item 異体字早見表
+  \urltab{\url{https://tool.mau2.com/ivs/ja/}}
+\end{itemize}
+
+このページでは、左上の検索ボックスに知りたい文字を入力することでその文字の異体字の一覧とCID値を知ることが出来ます。
+\sidenote{AJ1のCIDに関するより詳細な情報はUnicode.orgの%
+\icon{pdf}\href{https://unicode.org/ivd/data/2025-07-14/}{\filePath{IVD{\_}Charts{\_}Adobe-Japan1.pdf}}%
+を参照すると良いです。ただし、ファイルが60MB程度あり重いです。}
+
+例えば「葛」を検索した場合、10の字形があることが分かります。
+この内、\textgt{集合}に``{\AdobeJapan}''と書かれている字形が\cmd{CID}で利用できる字形になります。そのため、次のようにすることで2つの字形を分けて書くことが出来ます。
+
+\begin{demosource}
+  {\textbackslash}CID\{1481\}と{\textbackslash}CID\{7652\}
+  \tcblower
+  \large
+  \CID{1481}と\CID{7652}
+\end{demosource}
+
+もしも残りの字形を使いたい場合は、\href{https://moji.or.jp/mojikiban/font/}{IPAmj明朝フォント}と斎藤{\氏}作の\href{https://psitau.kitunebi.com/experiment.html}{\pkg{ipamjm}}を利用すると良いと思われます。上の早見表では\texttt{MJ}から続く文字情報基盤の字形を利用できるようです。
+あるいは、\pkg{BXglyphwiki}(\icon{github}\href{https://github.com/zr-tex8r/BXglyphwiki}{\textsf{zr-{\allowbreak}tex8r/BXglyphwiki}})と言う飛び道具もあります。
+
+% 文字情報基盤で規定されている文字は以下から確認できます。
+
+% \begin{itemize}
+%   \item 文字情報基盤検索システム
+%   \urltab{\url{https://moji.or.jp/mojikibansearch/basic}}
+% \end{itemize}
+
+\subsection{\texorpdfstring{\opt{multi}}{multi}オプション}
+
+\opt{multi}は{\fantizi}、{\jiantizi}、{\hankgo}をコマンドから扱うことが出来るようになるオプションです。
+このオプションで提供される\cmd{UTFT}、\cmd{UTFC}、\cmd{UTFK}および\cmd{CIDT}、\cmd{CIDC}、\cmd{CIDK}は\cmd{UTF}・\cmd{CID}のバリエーションコマンドに相当します。
+\sidenote{\cmd{UTFC}・\cmd{CIDC}は{\jiantizi}(Simplified Chinese)用ですが、``S''ではなく``C''であることに注意してください。}
+
+\begin{center}
+  \begin{booktabular}{>{\gtfamily}ccc}
+    \thead{スクリプト}  & \thead{UTF} & \thead{CID} \\
+    \midrule
+    {\fantizi} {\footnotesize (Traditional Chinese)}
+                & \cmd{UTFT}   & \cmd{CIDT}   \\
+    {\jiantizi} {\footnotesize (Simplified Chinese)}
+                & \cmd{UTFC}   & \cmd{CIDC}   \\
+    {\hankgo} {\footnotesize (Korean)}
+                & \cmd{UTFK}   & \cmd{CIDK}   \\
+  \end{booktabular}
+\end{center}
+
+これらのコマンドはデフォルトで明朝体・ゴシック体、\opt{deluxe}を有効にすると日本語と同様に7書体が利用できるようになります。\<\otfUpdate{2020-11-14}{2969}
+
+日本語を含む4つのスクリプトが利用できるとき、同じ{\Unicode}値であっても字形が異なる場合があることに注意してください。例えば、次の「直」、「骨」、「述」の例を見てください。
+
+\begin{center}
+  \begin{booktabular}{*{4}{>{\LARGE}c}}
+    \thead{漢字}  & \thead{{\fantizi}} & \thead{{\jiantizi}}  & \thead{{\hanja}} \\
+    \midrule
+    \UTF{76F4} {\normalsize (\UCN{76F4})}
+                    & \UTFT{76F4}    & \UTFC{76F4}     & \UTFK{76F4} \\[0.7zw]
+    \UTF{9AA8} {\normalsize (\UCN{9AA8})}
+                    & \UTFT{9AA8}    & \UTFC{9AA8}     & \UTFK{9AA8} \\[0.7zw]
+    \UTF{8FF0} {\normalsize (\UCN{8FF0})}
+                    & \UTFT{8FF0}    & \UTFC{8FF0}     & \UTFK{8FF0} \\
+  \end{booktabular}
+\end{center}
+
+本ドキュメントではすべてのスクリプトで原ノ味フォントを利用していますが、これらのスクリプトのデフォルトに使用されるフォントは、それぞれ以下のようになっています。
+
+\begin{itemize}
+  \item {\fantizi}   \tabto{5.5zw}ShanHeiSun-Light (\filePath{bsmi00lp.ttf})
+  \item {\jiantizi}   \tabto{5.5zw}BousungEG-Light-BG (\filePath{gbsn00lp.ttf})
+  \item {\hankgo} \tabto{5.5zw}Baekmuk Batang (\filePath{batang.ttf})
+\end{itemize}
+
+これらに加えて、\cmd{UTFM}があります。これは和文のフォントにグリフが含まれない場合、他のスクリプトのフォントにグリフがあれば{\fantizi}\,→\,{\jiantizi}\,→\,{\hankgo}の順で使われるようになります。（結果を見ないとどのような出力になるのか不定なので注意が必要です）
+\sidenote{\cmd{UTFM}はsubfont方式、2書体となっているため、\opt{deluxe}の影響を受けません。この問題に関しては\icon{github}\href{https://github.com/texjporg/japanese-otf-mirror/issues/31}{\textsf{texjporg/{\allowbreak}japanese-{\allowbreak}otf-{\allowbreak}mirror} \#31}でこの方式の変更提起がなされています。}
+
+
+他方で、\cmd{CID}のバリエーションコマンドに入力するCID値は、それぞれのスクリプトのものに依存します。そのため、{\fantizi}は``{\ptmfamily Adobe-CNS1-7}''、{\jiantizi}は``{\ptmfamily Adobe-GB1-5}''、{\hankgo}は``{\ptmfamily Adobe-Korean1-2}'' \sidenote{{\hankgo}のROSにはAdobe-KR-9もあります。このROSは最終更新が1998年のAdobe-Korean1-2よりも新しいROSですが、\pkg*{japanese-otf}ではAdobe-Korean1-2であることに注意してください。}
+です。
+そのため、{\AdobeJapan}とはCID値がまったく異なることに注意してください。
+
+これらのCIDの詳細は以下を参照してください。
+
+\begin{itemize}
+  \item Adobe-CNS1: The Adobe-CNS1-7 Character Collection
+    \urltab[github]{\url{https://github.com/adobe-type-tools/Adobe-CNS1}}
+  \item Adobe-GB1: The Adobe-GB1-6 Character Collection
+    \urltab[github]{\url{https://github.com/adobe-type-tools/Adobe-GB1}}
+  \item Adobe-KR: The Adobe-KR-9 Character Collection
+    \urltab[github]{\url{https://github.com/adobe-type-tools/Adobe-KR}}
+\end{itemize}
+
+CID値の検索方法は{\AdobeJapan}のようなページが無いため、上記ページのPDFを見て目で探してください。
+
+
+
+\end{document}

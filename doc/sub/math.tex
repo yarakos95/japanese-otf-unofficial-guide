@@ -1,0 +1,24 @@
+\documentclass[../otf-unofficial-guide]{subfiles}
+\begin{document}
+
+\section{数式への和文挿入}
+
+{\upLaTeX*}は、数式中で明朝体を使用するための\cmd{mathmc}、ゴシック体を使用するための\cmd{mathgt}を提供しています。これに加えて、\pkg{otf}の\opt{deluxe}下では、丸ゴシック体を使用するための\cmd{mathmg}が提供されます。ただし、多ウェイト化はされていないため、\cmd{mathmc}および\cmd{mathgt}は{\upLaTeX*}デフォルトのウェイトが使用されます。
+
+以下のように使用されます。
+
+\begin{demosource}[0.5]
+  {\textbackslash}[\\
+    \tabto{2zw}{\textbackslash}mathmc\{\jpincmd{明朝}\}\\
+    \tabto{2zw}{\textbackslash}mathgt\{\jpincmd{ゴシック}\}\\
+    \tabto{2zw}{\textbackslash}mathmg\{\jpincmd{丸ゴシック}\}\\
+  {\textbackslash}]
+  \tcblower
+  \[\mathmc{明朝}\mathgt{ゴシック}\mathmg{丸ゴシック}\]
+\end{demosource}
+
+\opt{disablejfam}%
+\sidenote{\opt{disablejfam}は数式モード内で和文を利用しないようにするオプションです。}%
+が有効になっているとき、\cmd{mathmc}、\cmd{mathgt}は無効なコマンドになりますが、\cmd{mathmg}は無効にならないことに注意してください。
+
+\end{document}

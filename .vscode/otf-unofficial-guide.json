@@ -1,0 +1,324 @@
+{
+  "deps": [],
+  "macros": [
+    {
+      "name": "AdobeJapan"
+    },
+    {
+      "name": "AdobeJapan",
+      "arg": {
+        "format": "[]",
+        "snippet": "AdobeJapan[${1:supplement}]"
+      }
+    },
+    {
+      "name": "brsgfm"
+    },
+    {
+      "name": "brtab"
+    },
+    {
+      "name": "cls",
+      "arg": {
+        "format": "{}",
+        "snippet": "cls{${1:document class name}}"
+      }
+    },
+    {
+      "name": "cls*",
+      "arg": {
+        "format": "{}",
+        "snippet": "cls*{${1:document class name}}"
+      }
+    },
+    {
+      "name": "cmd",
+      "arg": {
+        "format": "{}",
+        "snippet": "cmd{${1:command name}}"
+      }
+    },
+    {
+      "name": "cmd*",
+      "arg": {
+        "format": "{}",
+        "snippet": "cmd*{${1:command name}}"
+      }
+    },
+    {
+      "name": "dvipdfmx"
+    },
+    {
+      "name": "env",
+      "arg": {
+        "format": "{}",
+        "snippet": "env{${1:environment name}}"
+      }
+    },
+    {
+      "name": "fantizi"
+    },
+    {
+      "name": "filePath",
+      "arg": {
+        "format": "{}",
+        "snippet": "filePath{${1:arg}}"
+      }
+    },
+    {
+      "name": "GitHub"
+    },
+    {
+      "name": "hanja"
+    },
+    {
+      "name": "hankgo"
+    },
+    {
+      "name": "ibmfamily"
+    },
+    {
+      "name": "icon",
+      "arg": {
+        "format": "{}",
+        "snippet": "icon{${1|github,link,pdf,text|}}"
+      }
+    },
+    {
+      "name": "icon",
+      "arg": {
+        "format": "{}[]",
+        "snippet": "icon{${1|github,link,pdf,text|}}[${2:height}]"
+      }
+    },
+    {
+      "name": "inhibitkanjiskip"
+    },
+    {
+      "name": "inlinecode",
+      "arg": {
+        "format": "{}",
+        "snippet": "inlinecode{${1:arg}}"
+      }
+    },
+    {
+      "name": "itemSet",
+      "arg": {
+        "format": "{}{}",
+        "snippet": "itemSet{${1:upper arg}}{${2:lower arg}}"
+      }
+    },
+    {
+      "name": "jiantizi"
+    },
+    {
+      "name": "jpincmd*",
+      "arg": {
+        "format": "{}",
+        "snippet": "jpincmd*{${1:arg}}"
+      }
+    },
+    {
+      "name": "jpinurl"
+    },
+    {
+      "name": "kanjiUTF",
+      "arg": {
+        "format": "{}{}",
+        "snippet": "kanjiUTF{${1:kanji}}{${2:UTF}}"
+      }
+    },
+    {
+      "name": "kanjiVS",
+      "arg": {
+        "format": "{}{}",
+        "snippet": "kanjiVS{${1:kanji}}{${2:VS}}"
+      }
+    },
+    {
+      "name": "LuaTeX"
+    },
+    {
+      "name": "MdGothic"
+    },
+    {
+      "name": "middots"
+    },
+    {
+      "name": "middots",
+      "arg": {
+        "format": "[]",
+        "snippet": "middots[${1:height}]"
+      }
+    },
+    {
+      "name": "munja"
+    },
+    {
+      "name": "opt",
+      "arg": {
+        "format": "{}",
+        "snippet": "opt{${1:name}}"
+      }
+    },
+    {
+      "name": "opt*",
+      "arg": {
+        "format": "{}",
+        "snippet": "opt*{${1:name}}"
+      }
+    },
+    {
+      "name": "otfUpdate",
+      "arg": {
+        "format": "{}{}",
+        "snippet": "otfUpdate{${1:date}}{${2:topic number}}"
+      }
+    },
+    {
+      "name": "pkg",
+      "arg": {
+        "format": "{}",
+        "snippet": "pkg{${1:name}}"
+      }
+    },
+    {
+      "name": "pkg*",
+      "arg": {
+        "format": "{}",
+        "snippet": "pkg*{${1:name}}"
+      }
+    },
+    {
+      "name": "ShiftJIS"
+    },
+    {
+      "name": "subCIDN",
+      "arg": {
+        "format": "{}",
+        "snippet": "subCIDN{${1:CID number}}"
+      }
+    },
+    {
+      "name": "subUCN",
+      "arg": {
+        "format": "{}",
+        "snippet": "subUCN{${1:Unicode codepoint}}"
+      }
+    },
+    {
+      "name": "terminalCMD",
+      "arg": {
+        "format": "{}",
+        "snippet": "terminalCMD{${1:arg}}"
+      }
+    },
+    {
+      "name": "TeXLive"
+    },
+    {
+      "name": "texqa",
+      "arg": {
+        "format": "{}",
+        "snippet": "texqa{${1:topic number}}"
+      }
+    },
+    {
+      "name": "textfrac",
+      "arg": {
+        "format": "{}{}",
+        "snippet": "textfrac{${1:numerator}}{${2:denominator}}"
+      }
+    },
+    {
+      "name": "textlrangle",
+      "arg": {
+        "format": "{}",
+        "snippet": "textlrangle{${1:arg}}"
+      }
+    },
+    {
+      "name": "TeXWiki"
+    },
+    {
+      "name": "thead",
+      "arg": {
+        "format": "[]{}",
+        "snippet": "thead[${2:cols}]{${1:arg}}"
+      }
+    },
+    {
+      "name": "thead",
+      "arg": {
+        "format": "{}",
+        "snippet": "thead{${1:arg}}"
+      }
+    },
+    {
+      "name": "UCN",
+      "arg": {
+        "format": "{}",
+        "snippet": "UCN{${1:Unicode codepoint}}"
+      }
+    },
+    {
+      "name": "Unicode"
+    },
+    {
+      "name": "upLaTe*"
+    },
+    {
+      "name": "upLaTeXdvipdfmx"
+    },
+    {
+      "name": "upLaTeXdvipdfmx*"
+    },
+    {
+      "name": "urltab"
+    }
+  ],
+  "envs": [
+    {
+      "name": "booktabular",
+      "arg": {
+        "format": "{}",
+        "snippet": "{${1:ncols}}"
+      }
+    },
+    {
+      "name": "booktabular",
+      "arg": {
+        "format": "*{}",
+        "snippet": "*{${1:ncols}}"
+      }
+    },
+    {
+      "name": "demosource"
+    },
+    {
+      "name": "demosource",
+      "arg": {
+        "format": "[]",
+        "snippet": "[${1:ratio}]"
+      }
+    },
+    {
+      "name": "demosource",
+      "arg": {
+        "format": "*",
+        "snippet": "*"
+      }
+    },
+    {
+      "name": "directory"
+    },
+    {
+      "name": "terminal"
+    },
+    {
+      "name": "texsource"
+    }
+  ],
+  "keys": {},
+  "args": []
+}

@@ -1,0 +1,96 @@
+\ProvidesPackage{IBMpsJP}
+\RequirePackage{otf}
+
+\DeclareKanjiFamily{JY2}{ibmpsjp}{}
+\DeclareKanjiFamily{JT2}{ibmpsjp}{}
+
+\DeclareFontShape{\otf@JYn}{ibmpsjp}{m}{n}{ <-> s * [\utf@sc@le] \otf@pfx@ \brsg@pfx@ nmlibmpsjpr\nlck@sfx@-h }{}
+\DeclareFontShape{\otf@JTn}{ibmpsjp}{m}{n}{ <-> s * [\utf@sc@le] \otf@pfx@ \brsg@pfx@ nmlibmpsjpr\nlck@sfx@-v }{}
+
+\DeclareFontShape{\otf@JYn}{ibmpsjp}{bx}{n}{ <-> s * [\utf@sc@le] \otf@pfx@ \brsg@pfx@ nmlibmpsjpb\nlck@sfx@-h }{}
+\DeclareFontShape{\otf@JTn}{ibmpsjp}{bx}{n}{ <-> s * [\utf@sc@le] \otf@pfx@ \brsg@pfx@ nmlibmpsjpb\nlck@sfx@-v }{}
+
+\DeclareRobustCommand{\ibmfamily}{\kanjifamily{ibmpsjp}\selectfont}
+\def\ibmdefault{ibmpsjp}
+
+\AtBeginDvi{ \special{pdf:mapfile otf-ibmpsjp.map} }
+
+\let\original@UTF\UTF
+\let\original@CID\CID
+
+\if@deluxe
+    \DeclareRobustCommand{\UTF}[1]{\begingroup%
+        \edef\reserved@a{\gtdefault}%
+        \edef\reserved@b{\mgdefault}%
+        \edef\reserved@c{\ibmdefault}%
+        \ifx\k@family\reserved@a%
+            \kanjifamily{utfjg}%
+        \else\ifx\k@family\reserved@b%
+            \kanjifamily{utfjmg}%
+        \else\ifx\k@family\reserved@c%
+            \kanjifamily{utfjibm}%
+        \else%
+            \kanjifamily{utfj}%
+        \fi\fi\fi%
+            \uppercase{\if@otf@macro@nosub\set@character@\else\set@character\fi="#1}%
+        \endgroup%
+    }
+    \DeclareRobustCommand{\CID}[1]{\begingroup%
+        \edef\reserved@a{\gtdefault}%
+        \edef\reserved@b{\mgdefault}%
+        \edef\reserved@c{\ibmdefault}%
+        \ifx\k@family\reserved@a%
+            \kanjifamily{cidjg}%
+        \else\ifx\k@family\reserved@b%
+            \kanjifamily{cidjmg}%
+        \else\ifx\k@family\reserved@c%
+            \kanjifamily{cidjibm}%
+        \else%
+            \kanjifamily{cidj}%
+        \fi\fi\fi%
+            \if@otf@macro@nosub\set@character@\else\set@character\fi=#1%
+        \endgroup%
+    }
+\else
+    \DeclareRobustCommand{\UTF}[1]{\begingroup%
+        \edef\reserved@a{\gtdefault}%
+        \edef\reserved@b{\ibmdefault}%
+        \ifx\k@family\reserved@a%
+            \kanjifamily{utfj}%
+            \kanjiseries{bx}%
+        \else\ifx\k@family\reserved@b%
+            \kanjifamily{utfjibm}%
+        \else%
+            \kanjifamily{utfj}%
+        \fi\fi%
+        \uppercase{\if@otf@macro@nosub\set@character@\else\set@character\fi="#1}%
+        \endgroup%
+    }
+    \DeclareRobustCommand{\CID}[1]{\begingroup%
+        \edef\reserved@a{\gtdefault}%
+        \edef\reserved@b{\ibmdefault}%
+        \ifx\k@family\reserved@a%
+            \kanjifamily{cidj}%
+            \kanjiseries{bx}%
+        \else\ifx\k@family\reserved@b%
+            \kanjifamily{cidjibm}%
+        \else%
+            \kanjifamily{cidj}%
+        \fi\fi%
+        \if@otf@macro@nosub\set@character@\else\set@character\fi=#1%
+        \endgroup%
+    }
+\fi
+
+\DeclareKanjiFamily{\otf@JYn}{utfjibm}{}
+\DeclareKanjiFamily{\otf@JTn}{utfjibm}{}
+\DeclareKanjiFamily{\otf@JYn}{cidjibm}{}
+\DeclareKanjiFamily{\otf@JTn}{cidjibm}{}
+
+\Declare@FontShape{utfjibm}{m}{0123456789abcdefghijklmnopqrstuvwxyz-}{utfjibmr\nlck@sfx@}
+\Declare@FontShape{cidjibm}{m}{012345-}                              {cidjibmr}
+
+\Declare@FontShape{utfjibm}{bx}{0123456789abcdefghijklmnopqrstuvwxyz-}{utfjibmb\nlck@sfx@}
+\Declare@FontShape{cidjibm}{bx}{012345-}                              {cidjibmb}
+
+\endinput

@@ -1,0 +1,76 @@
+\documentclass[../otf-unofficial-guide]{subfiles}
+\begin{document}
+
+\section{感嘆符・疑問符}
+
+\pkg{otf}のフォントメトリックでは、感嘆符「{\ibmfamily ！}\hspace{-0.5zw}\subUCN{FF01}」や疑問符「{\ibmfamily ？}\hspace{-0.5zw}\subUCN{FF1F}」の後（横組では右、縦組では下）にアキが挿入されます。
+
+\begin{demosource}
+{ ちょっと！\inhibitglue 待って。}
+\tcblower
+ちょっと！待って。
+\end{demosource}
+
+もしもこれを詰めたい場合は、\cmd{inhibitglue}や\cmd{<}を利用します。
+
+\begin{demosource}
+ちょっと！\inhibitglue\cmd{inhibitglue}\textvisiblespace 待って。
+\tcblower
+ちょっと！\inhibitglue 待って。
+\end{demosource}
+
+この他にも、「{\ibmfamily ‼}\hspace{-0.8zw}\subUCN{203C}」、「{\ibmfamily ⁇}\hspace{-0.4zw}\subUCN{2047}」、「{\ibmfamily ⁈}\hspace{-0.4zw}\subUCN{2048}」、「{\ibmfamily ⁉}\hspace{-0.6zw}\subUCN{2049}」の後にもアキが挿入されます。
+\sidenote{半角の「\,{\ibmfamily \UTF{0021}}\hspace{-0.5zw}\subUCN{0021}」、「\,{\ibmfamily \UTF{003F}}\hspace{-0.3zw}\subUCN{003F}」の後にはアキは挿入されません。}
+
+ただし、これらの感嘆符と疑問符のアキは以下の入力方法では挿入されないことに注意が必要です。
+
+\begin{itemize}
+  \item \cmd{UTF}、\cmd{CID}
+  \item \pkg{ajmacros}から提供される\cmd{ajLig}
+\end{itemize}
+
+\section{プロポーショナル組}
+
+\pkg{otf}では\cmd{propshape}によってプロポーショナル組が実現できます。プロポーショナル組とは、文字の形に合わせて各文字の幅を調整した組み方です。例えば、以下のように読点の右側のアキがなくなったり、字が詰まったようになります。
+
+\begin{demosource}[0.4]
+  \{{\textbackslash}propshape\textvisiblespace
+  これが、プロポーショナル組。{\textbackslash}par\textvisiblespace
+  しっかり詰まって見えます。\}
+  \tcblower
+  {\propshape これが、プロポーショナル組。\par
+  しっかり詰まって見えます。}
+\end{demosource}
+
+本ドキュメントでは原ノ味フォントを利用していますが、原ノ味フォントでは本来プロポーショナル組は出来ません。そこで、ここでは\pkg{PXharaproj}を利用しています。
+
+\begin{itemize}
+  \item LaTeX: Auxiliary settings for use of ``Harano Aji Fonts'' on (u)pLaTeX
+  \urltab[github]{\url{https://github.com/zr-tex8r/PXharapro}}
+\end{itemize}
+
+ヒラギノフォントに関するプロポーショナル組のための成果物は、TLContribに集録されている\texttt{japanese-otf(-uptex)-nonfree}からダウンロードしてください。\otfUpdate{2018-02-11}{2366}
+これ以外のフォントに関しては、\pkg*{japanese-otf}に含まれているスクリプトを利用して必要なTFM・VFを生成して対応することになります。
+
+ちなみに、プロポーショナル組下での感嘆符・疑問符の後のアキは挿入されないようです。
+
+\section{縦書きにおける全角クォート}
+
+\pkg{otf}のフォントメトリックでは、縦組中の全角クォートはミニュート（ノノカギ）になります。
+
+\begin{demosource}*[0.2]
+  {\textbackslash}parbox<t>\{14zw\}\{これは“ダブルミニュート”\inhibitkanjiskip、\%\\
+  ‘シングルミニュート’です。\}
+  \tcblower
+  \parbox<t>{14zw}{これは“ダブルミニュート”、‘シングルミニュート’です。}
+\end{demosource}
+
+これは、全角クォートにのみ影響します。そのため、\LaTeX{}で利用される\texttt{\textasciigrave\nobreakspace\textquotesingle}のような記法で提供されるクォートには影響しません。
+
+\begin{demosource}*[0.2]
+  {\textbackslash}parbox<t>\{11zw\}\{これは\textasciigrave\textasciigrave クォート\textquotesingle\textquotesingle です。\}
+  \tcblower
+  \parbox<t>{11zw}{これは``クォート''です。}
+\end{demosource}
+
+\end{document}

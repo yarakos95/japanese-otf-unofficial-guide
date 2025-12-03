@@ -1,0 +1,215 @@
+\documentclass[../otf-unofficial-guide]{subfiles}
+\begin{document}
+
+
+\section{パッケージオプション}
+
+\pkg{otf}では以下のパッケージオプションを利用できます。オプションの宣言に順序はありません。
+
+\begin{description}
+  \item[\itemSet{5zw}{platex \\[-0.5zw] uplatex}]
+                  \tab {\pLaTeX}・{\upLaTeX}対応 %
+                  \sidenote{\cmd{documentclass}のオプションで{\LaTeX}が指定されていたり、\opt{autodetect-engine}がデフォルトで有効になっているため、パッケージオプションで指定しなくてもどうにかなっている場合が多い印象です。}
+  \vspace{0.7zw}
+  \item[\itemSet{5zw}{nomacros \\[-0.5zw] nomacro}]
+                  \tab \pkg{ajmacros}を読み込まない
+  \vspace{0.7zw}
+  \item[noreplace] \tab TFMを\pkg{otf}のものに置き替えない
+  \item[expert]    \tab 横組・縦組・ルビに応じた専用仮名を使う
+  \item[noruby]    \tab \opt{expert}使用時にルビ専用仮名を使用しない
+  \item[jis2004]   \tab JIS2004字形を利用する
+  \item[bold]      \tab \cmd{gtfamily}を\cmd{gtfamily}\cmd{bfseries}と等価にする
+  \item[deluxe]    \tab 多書体化、多ウェイト化。計7書体が使えるようにする
+  \item[multi]     \tab 多スクリプト化。{\fantizi}、{\jiantizi}、{\hankgo}をコマンドから使えるようにする
+  \item[burasage]   \tab ぶら下げ組にする
+  \item[scale=\textlrangle{値}]
+                    \tab 欧文と和文のフォントサイズ比を指定する
+  \item[subfont]    \tab \opt{multi}で提供されるコマンドにsubfont方式を利用する
+                    \warichu{ただし、VFおよびTFMを生成する必要がある}\otfUpdate{2025-07-24}{3979}
+\end{description}
+
+\subsection{オプションの競合}
+
+パッケージオプションの組み合わせにはいくつかの競合が存在します。これらの組が宣言されているとき、一方が優先され、他方が無効化されるようになっています。
+
+\begin{center}
+  \begin{booktabular}{lcc}
+    \thead{オプション組み合わせ} & \thead{優先} & \thead{無効化} \\
+    \midrule
+    \opt*{[expert, noreplace]} &
+    \opt*{expert} &
+    \opt*{noreplace} \\
+    \opt*{[deluxe, bold]} &
+    \opt*{deluxe} &
+    \opt*{bold} \\
+    \opt*{[deluxe, noreplace]} &
+    \opt*{deluxe} &
+    \opt*{noreplace} \\
+  \end{booktabular}
+\end{center}
+
+\vfil
+
+\subsection{\texorpdfstring{\opt{nomacros}}{nomacrosオプション}}
+
+\opt{nomacros}は\pkg{ajmacros}を読み込まないようにするオプションです。
+
+一部の記号用コマンドが\pkg{otf}から提供されていますが、\opt{nomacros}によってこれらも利用できなくなります。
+
+\subsection{\texorpdfstring{\opt{noreplace}}{noreplaceオプション}}
+
+\opt{noreplace}は\pkg{otf}固有のフォントメトリックを使用しないオプションです。
+
+例えば、\cls{jlreq}には固有のフォントメトリックがあります。そのため、\cls*{jlreq}+\pkg{otf}で\cls*{jlreq}のメトリックを利用したい場合は\opt{noreplace}を利用します。
+一方で、\cls{jlreq}で\pkg{otf}を使うための\pkg{jlreq-deluxe}もあります。このパッケージは\cls{jlreq}のメトリックを保ったまま\pkg{otf}を読み込むためのパッケージです。
+
+\subsection{\texorpdfstring{\opt{expert}}{expertオプション}}
+
+横組、縦組、ルビに応じた専用仮名を利用できるようにします。縦組、横組用の専用仮名は自動的に割り当てられ、ルビに専用仮名を指定するための\cmd{rubyfamily}が提供されます。\sidenote{\pkg{pxrubica}では\cmd{rubyfontsetup}からルビに割り当てられるフォントを指定できます。}
+
+\opt{expert}有効時にルビ専用仮名を使用したくない場合は、\opt{noruby}を指定することでルビ専用仮名の使用を抑制できます。
+
+フォントが横組、縦組、ルビに応じた専用仮名に対応しているかどうかは、\terminalCMD{otfinfo}で調べると良いです。\texttt{hkna}が横組専用仮名、\texttt{vkna}が縦組専用仮名、\texttt{ruby}がルビ専用仮名に対応していることを表しています。
+
+以下では\filePath{haranoajimincho-regular.otf}を\terminalCMD{otfinfo}で調べた例を示しています。
+デフォルトで利用される原ノ味フォントでも横組、縦組、ルビの専用仮名を利用できます。ただし、ルビ専用仮名はグリフがありません。
+
+\begin{terminal}
+> otfinfo -f haranoajimincho-regular.otf
+aalt    Access All Alternates
+ccmp    Glyph Composition/Decomposition
+dlig    Discretionary Ligatures
+expt    Expert Forms
+  （...省略）
+hkna    Horizontal Kana Alternates
+  （...省略）
+ruby     Ruby Notation Forms
+  （...省略）
+vkna    Vertical Kana Alternates
+  （...省略）
+\end{terminal}
+
+原ノ味フォントでは以下のような結果を得ます。これを見る限りでは原ノ味フォントにおける例では違いがあるようには見えませんでした。\sidenote{\href{https://texwiki.texjp.org/?OTF}{{\TeXWiki}のOTFにおける「ヒラギノとmacOS」の項}
+あるいは、美文書作成入門第9版251ページにヒラギノフォントの例が掲載されているので、興味があれば参照してください。}
+
+\begin{demosource}[0.3]
+  りい{\textbackslash}{\textbackslash}\\
+  {\textbackslash}pbox<t>\{りい\}
+  \tcblower
+  りい\\
+  \pbox<t>{りい}
+\end{demosource}
+
+\subsection{\texorpdfstring{\opt{jis2004}}{jis2004オプション}}
+
+\opt{jis2004}はJIS X 0213:2004（通称JIS2004）で変更された例示字形\sidenote{JIS2004で変更された変更された例示字形を「JIS2004字形」と呼びます。逆に、変更前の字形を「JIS90字形」と呼びます。}を利用するようになります。
+
+以下に\opt{jis2004}が指定されていない場合（上段）と指定されている場合（下段）の一例を以下に示します。
+
+\begin{center}
+  \begin{booktabular}{*{8}{>{\LARGE}C{3zw}}}
+    \thead{\raisebox{0.3zw}{JIS90字形}} &
+    \CID{1981} &  % 巷󠄀
+    \CID{3384} &  % 箸󠄀
+    \CID{1909} &  % 諺󠄀
+    \CID{3056} &  % 辻󠄀
+    \CID{3819} &  % 餅󠄀
+    \CID{1207} \\ % 鰯󠄀
+    \thead{\raisebox{0.3zw}{JIS2004字形}} &
+    \CID{7679} &  % 巷
+    \CID{7775} &  % 箸
+    \CID{7678} &  % 諺
+    \CID{8267} &  % 辻
+    \CID{7799} &  % 餅
+    \CID{7636} \\ % 鰯
+  \end{booktabular}
+\end{center}
+
+\opt{jis2004}で変更される文字は168あります。より詳細には以下のリンクを参照してください。
+
+\begin{itemize}
+  \item JIS2004制定時の変更点 - CyberLibrarian:
+  \urltab{\url{https://www.asahi-net.or.jp/~ax2s-kmtn/ref/jis2000-2004.html}}
+\end{itemize}
+
+これらの組を同一文書内で区別して入力するには、\cmd{CID}を利用する方法と異体字セレクタを利用する方法の2通りがあります。
+ただし、異体字セレクタは{\upLaTeXdvipdfmx}下でのみ利用可能です。
+
+\subsection{\texorpdfstring{\opt{bold}}{boldオプション}}
+
+\opt{bold}を有効にすると\cmd{gtfmaily}が\cmd{gtfamily}\cmd{bfseries}と同じウェイトのゴシックになります。
+すなわち、\cmd{gtfmaily}が{\gtfamily\bfseries ボールドウェイト}になります。
+
+ちなみに、{\upLaTeX*}のデフォルトの原ノ味フォントでは、\cmd{gtfamily}は{\MdGothic ミディアムウェイト}のゴシックが選択されます。
+\pkg{otf}を読み込むと、\cmd{gtfamily}は{\gtfamily\mdseries レギュラーウェイト}のゴシックが選択されます。
+\opt{bold}有効下の\cmd{gtfamily}\cmd{bfseries}は、どちらの場合でも{\gtfamily\bfseries ボールドウェイト}のゴシックです。
+
+\subsection{\texorpdfstring{\opt{deluxe}}{deluxeオプション}}
+
+\opt{deluxe}によって明朝体3ウェイト（細字・中字・太字）、ゴシック体3ウェイト（中字・太字・極太）、丸ゴシック体1ウェイトの計7書体が使えるようになります。
+\sidenote{本ドキュメントでは、次のフォントを使用しています。
+  \begin{itemize}
+    \item \cmd{mcfamily} \tabto{6.3zw} 原ノ味明朝
+    \item \cmd{gtfamly}  \tabto{6.3zw} 原ノ味ゴシック
+    \item \cmd{mgfamily} \tabto{6.3zw} 源柔ゴシック
+  \end{itemize}}
+
+これらを指定するコマンドは次のようになっています。加えて、下線付きのコマンドが追加で提供されます。
+
+\begin{center}
+  \begin{booktabular}{lc>{\ttfamily}ll}
+    明朝体        & \textmc{\ltseries 細字} & hmc/l  & \cmd{mcfamily}\cmd*{ltseries} \\
+                  & \textmc{中字}           & hmc/m  & \cmd{mcfamily}               \\
+                  & \textmc{\bfseries 太字} & hmc/bx & \cmd{mcfamily}\cmd{bfseries} \\
+    \midrule
+    \textgt{ゴシック体}
+                  & \textgt{中字}           & hgt/m  & \cmd{gtfamily}               \\
+                  & \textgt{\bfseries 太字} & hgt/bx & \cmd{gtfamily}\cmd{bfseries} \\
+                  & \textgt{\ebseries 極太} & hgt/eb & \cmd{gtfamily}\cmd*{ebseries} \\
+    \midrule
+                  \textmg{丸ゴシック体}
+                  & -                       & mg     & \cmd*{mgfamily} (\cmd*{textmg}) \\
+  \end{booktabular}
+\end{center}
+
+% https://github.com/adobe-fonts/source-han-serif/releases
+% https://github.com/adobe-fonts/source-han-sans/releases
+% http://jikasei.me/font/genjyuu/#google_vignette
+
+後述しますが、\opt{multi}を指定したときに利用できるようになる{\fantizi}、{\jiantizi}、{\hankgo}に対しても7書体が利用できるようになります。
+
+\subsection{\texorpdfstring{\opt{burasage}}{burasageオプション}}
+
+通常の組版では追い出し組になりますが、これを\textgt{ぶら下げ組}に変更します。
+
+追い出し組は、行頭に句読点が来たときに前行の行末から1文字追い出すようにして組む方法です。一方で、ぶら下げ組は、行頭に来る句読点を前行の行末にはみ出すような形で組む方法です。\sidenote{``ぶら下げ''とは縦組時のイメージです。追い出し組に対して追い込み組とも呼ばれます。}
+
+ここでは簡単な例として、以下を挙げておきます。
+
+\begin{center}
+  \begin{booktabular}{llll}
+    \thead{追い出し組}
+    &
+    \fbox{\begin{minipage}<t>[t]{7.4zw}
+      吾輩は猫である。名前はまだない。
+    \end{minipage}}
+    &
+    \fbox{\begin{minipage}<t>[t]{7.4zw}
+      {\brsgfm
+      吾輩は猫である。名前はまだない。}
+    \end{minipage}}
+    &
+    \thead{ぶら下げ組}
+    \\
+  \end{booktabular}
+\end{center}
+
+\cls{jlreq}でも\opt{hanging{\_}punctuation}を課すことでぶら下げ組が可能です。このオプションと\opt{burasage}は競合します。そのため、\cls*{jlreq}\inhibitkanjiskip＋\inhibitkanjiskip\pkg*{otf}下におけるぶら下げ組は\pkg{otf}を使用せず、\pkg{jlreq-deluxe}を介した指定を行うと良いでしょう。
+
+\subsection{\texorpdfstring{\opt{scale}}{scaleオプション}}
+
+欧文に対する和文の大きさの比\textfrac{和文}{欧文}を調整するオプションです。\opt{scale=\textlrangle{値}}の形で指定します。デフォルトでは\cmd{Cjascale}が定義されていればその値を、定義されていなければ0.962216となります。
+
+\cmd{Cjascale}は文書クラスによって定義されています。例えば、\cls{jsclasses}では定義されています。一方で、\cls{jlreq}では定義されていません。
+
+\end{document}

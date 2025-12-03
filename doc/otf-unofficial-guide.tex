@@ -1,0 +1,107 @@
+\RequirePackage{plautopatch}
+\documentclass[uplatex, dvipdfmx, paper=a4paper, jis2004,
+    fore-edge=19zw,
+    line_length=35zw,
+    sidenote_length=16zw,
+    number_of_lines=38
+  ]{jlreq}
+\jlreqsetup{
+    quote_fontsize=small,
+    quote_beforeafter_space=0.8\baselineskip,
+    quote_indent=1.5zw,
+    quote_end_indent=1.5zw,
+  }
+
+\input{setup-otf.tex}
+
+\title{\pkg*{japanese-otf}非公式マニュアル}
+\author{やらかしの貴公子}
+\date{\docDate}
+
+\begin{document}
+\savegeometry{body}
+\newgeometry{textwidth=40zw, textheight=700pt,marginparwidth=0pt}
+
+\thispagestyle{fancy}
+\fancyhead{}
+\fancyfoot{\docLicense}
+\pagestyle{cover}
+
+\maketitle
+
+\begin{abstract}
+  これはユーザー向けの\pkg*{japanese-otf}非公式マニュアルです。
+
+  \vspace{0.7zw}
+  \noindent{\centering
+  \textgt{\small 対象バージョン}：%
+  2025-07-24 TeX JP org, v1.7b8 psitau, u0.32 ttk%
+  （コミュニティ版）}
+\end{abstract}
+
+{
+  \small
+  \tableofcontents
+}
+
+\clearpage
+
+\section*{謝辞}
+
+\pkg*{japanese-otf}を開発する齋藤修三郎{\氏}、田中琢爾{\氏}、および日本語{\TeX}開発コミュニティの皆様、この場を借りて不断のないパッケージ開発・保守に感謝いたします。
+
+\vfil
+\subsection*{ドキュメントについて}
+
+\pkg{otf}を中心とした\pkg*{japanese-otf}は日本語{\LaTeX}において重要なパッケージの1つです。
+しかしながら、公式のマニュアルは2004年に作成されたもののみであり、その当時から大きく変更はないとは言え現在のパッケージに対するマニュアルはありません。
+
+そのため、現在において\pkg{otf}を使うにはインターネットの散らばった情報を探すか美文書作成入門等の書籍を購入する必要がありました。しかしながら、これらで\pkg{otf}が利用できるすべての機能を網羅しているわけではありませんでした。
+
+本ドキュメントは\pkg{otf}の使用方法を網羅的に解説することを目的としています。
+
+加えて、\pkg*{japanese-otf}にバンドルされている\pkg{ajmacros}については別に\icon{pdf}\filePath{ajmacros-unofficial-guide.pdf}で解説しています。
+
+\vfil
+\subsection*{資料}
+
+本ドキュメントは{\TeXLive} 2025での\pkg{otf}の実際の挙動と以下の資料を基に作成されています。
+
+\begin{itemize}
+  \item 「OTFパッケージについて」、齋藤修三郎\hspace{0.5zw}著
+  \urltab[pdf]{\url{https://psitau.kitunebi.com/PDF/otfmanual.pdf}}
+  \item \LaTeX 美文書作成入門［改訂第9版］、奥村晴彦，黒木裕介\hspace{0.5zw}著、技術評論社
+  \urltab{\url{https://gihyo.jp/book/2023/978-4-297-13889-9}}
+  \item {\TeXWiki}
+  \urltab{\url{https://texwiki.texjp.org/}}
+  \item {\TeX} Forum \icon{tex}
+  \urltab{\url{https://okumuralab.org/tex/}}
+\end{itemize}
+
+\vfil
+\subsection*{免責}
+
+本ドキュメントは非公式マニュアルです。そのため、間違いが含まれる可能性があります。
+
+また、本ドキュメントは\pkg{otf}のマニュアルですが、{\upLaTeXdvipdfmx}のみをサポートします。そのため、{\pLaTeX}や{\dvipdfmx}以外のDVIウェア（\terminalCMD{dvips}等）を利用した場合の動作を確認していないため、本ドキュメントと異なる結果を得る可能性があることに注意してください。
+
+\newpage
+\loadgeometry{body}
+\setcounter{page}{1}
+\pagestyle{plain}
+
+\subfile{sub/about.tex}
+
+\newpage
+
+\subfile{sub/options.tex}
+
+\subfile{sub/commands.tex}
+
+\subfile{sub/fontmetric.tex}
+
+\subfile{sub/math.tex}
+
+\subfile{sub/tools.tex}
+
+\end{document}

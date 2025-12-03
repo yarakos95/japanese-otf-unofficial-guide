@@ -1,0 +1,136 @@
+\documentclass[../otf-unofficial-guide]{subfiles}
+\begin{document}
+
+
+\section{多書体化されたフォントの変更}
+
+\pkg{otf}は\opt{deluxe}を有効にすることで多書体化が可能です。これによって、デフォルトでは原ノ味明朝3ウェイト、原ノ味ゴシック3ウェイトが利用できるようになり、丸ゴシック体として原ノ味ゴシックのミディアムウェイトが割り当てられるようになります。\sidenote{原ノ味には丸ゴシック体に対応するフォントが無いため、ウェイトの異なるフォントが代用されています。}
+
+これを他のフォントに変更する、あるいはいずれかの割り当てフォントを変更するために、ここでは\pkg+{pxchfon}を利用する方法を簡単に紹介します。\sidenote{\pkg*{pxchfon}を利用した方法は{\dvipdfmx}で実行する場合にのみ有効です。そのため、\terminalCMD{dvips}等の他のDVIドライバでは使えない方法であることに留意してください。}
+
+\subsection{多書体化された日本語フォントの変更}
+
+\pkg*{pxchfon}ではプリセットとして構成されているフォント群を指定する方法と個別に指定する方法の2つがあります。
+
+\subsubsection{プリセット指定}
+
+プリセットとして構成されているフォントの詳細は\pkg*{pxchfon}のパッケージマニュアルを参照してほしいですが、ここでは簡単にヒラギノフォントを指定する場合を紹介します。
+
+\begin{texsource}
+\usepackage[noalphabet, hiragino-elcapitan-pron]{pxchfon}
+\end{texsource}
+
+これによってMac OS X El Capitanに搭載されているPr6N版のヒラギノフォントに変更されます。
+
+あるいは、源ノフォントを指定する場合は以下のようにします。\sidenote{源ノフォントはAJ1に対応しないため、\opt{unicode}が必要になります。一方で、原ノ味フォントはAJ1に対応するために源ノフォントを利用して作成されています。}
+
+\begin{texsource}
+\usepackage[noalphabet, sourcehan, unicode]{pxchfon}
+\end{texsource}
+
+\subsubsection{フォントの個別指定}
+
+ここでは、原ノ味を利用している際に丸ゴシック体を追加する方法を簡易的に説明します。
+
+原ノ味フォントは源ノフォントを基に作成されているので、同じ源ノフォントから作成されている無償の源柔ゴシックを利用します。源柔ゴシックは以下のページからダウンロードできます。
+\sidenote{数はそれほど多くないですが、\href{https://fontfree.me/category/marugo}{フォントフリー}と言う日本語フォント投稿サイトを見ると魅力的な丸ゴシック体の無償フォントを見ることが出来ます。}
+
+\begin{itemize}
+  \item 源柔ゴシック (げんじゅうゴシック) | 自家製フォント工房
+    \urltab{\url{http://jikasei.me/font/genjyuu/#google_vignette}}
+\end{itemize}
+
+ここからファイルをダウンロード・解凍したのち、以下のディレクトリにフォントファイルを配置し、\terminalCMD{mktexlsr}を実行します。
+
+\begin{directory}
+\textdollar TEXMFLOCAL/fonts/truetype/GenjyuuGothic
+\end{directory}
+
+これでプリアンブルで以下のように\cmd{setmarugothicfont}を指定することで源柔ゴシックが\cmd{mgfamily}に丸ゴシック体\sidenote{\mgfamily これが源柔フォントです}が割り当てられるようになります。
+
+\begin{texsource}
+\usepackage[noalphabet, haranoaji]{pxchfon}
+\setmarugothicfont{GenJyuuGothic-Regular.ttf}
+\end{texsource}
+
+もちろん\cmd{setmarugothicfont}の他にも、明朝体、ゴシック体とそれらのウェイトに応じたフォント構成コマンドがあります。
+
+\begin{itemize}
+  \item 明朝体
+  \begin{itemize}
+    \item 細ウェイト: \tabto{7zw} \cmd{setlightminchofont}
+    \item 中ウェイト: \tabto{7zw} \cmd{setmediumminchofont}
+    \item 太ウェイト: \tabto{7zw} \cmd{setboldminchofont}
+  \end{itemize}
+  \item ゴシック体
+  \begin{itemize}
+    \item 中ウェイト:   \tabto{7zw} \cmd{setmediumgothicfont}
+    \item 太ウェイト:   \tabto{7zw} \cmd{setboldgothicfont}
+    \item 極太ウェイト: \tabto{7zw} \cmd{setxboldgothicfont}
+  \end{itemize}
+  \item 丸ゴシック体:   \tabto{9zw} \cmd{setmarugothicfont}
+\end{itemize}
+
+\subsection{多書体化された\UTFT{7E41}・\UTFC{7B80}・\UTFK{D55C}のフォント変更}
+
+{\fantizi}・{\jiantizi}・{\munja}のフォントを変更するにも同様に\pkg*{pxchfon}を利用します。\pkg*{pxchfon}では以下のコマンドが提供されています。ただし、\eghostguarded{\textlrangle{lang name}}には\texttt{tchinese}、\texttt{schinese}、\texttt{korean}のいずれかが入ります。
+
+\begin{itemize}
+  \item 明朝体
+  \begin{itemize}
+    \item 細ウェイト: \tabto{7zw} \cmd{set\textlrangle{lang name}lightminchofont}
+    \item 中ウェイト: \tabto{7zw} \cmd{set\textlrangle{lang name}mediumminchofont}
+    \item 太ウェイト: \tabto{7zw} \cmd{set\textlrangle{lang name}boldminchofont}
+  \end{itemize}
+  \item ゴシック体
+  \begin{itemize}
+    \item 中ウェイト:   \tabto{7zw} \cmd{set\textlrangle{lang name}mediumgothicfont}
+    \item 太ウェイト:   \tabto{7zw} \cmd{set\textlrangle{lang name}boldgothicfont}
+    \item 極太ウェイト: \tabto{7zw} \cmd{set\textlrangle{lang name}xboldgothicfont}
+  \end{itemize}
+  \item 丸ゴシック体:   \tabto{9zw} \cmd{set\textlrangle{lang name}marugothicfont}
+\end{itemize}
+
+本ドキュメントでは、見出しのために太ゴシック体の\UTFT{7E41}・\UTFC{7B80}・\UTFK{D55C}を原ノ味に変更しています。これらのフォントはそれぞれのROSに対応しています。
+
+\begin{texsource}
+\settchineseboldgothicfont{HaranoAjiGothicTW-Bold.otf}
+\setschineseboldgothicfont{HaranoAjiGothicCN-Bold.otf}
+\setkoreanboldgothicfont{HaranoAjiGothicK1-Bold.otf}
+\end{texsource}
+
+それぞれのフォントは以下のGitHubリポジトリから取得できます。tagページから\filePath{.tar.gz}でダウンロードすると良いでしょう。
+
+\begin{itemize}
+  \item Experimental Harano Aji Fonts TW
+    \urltab[github]{\url{https://github.com/trueroad/HaranoAjiFontsTW}}
+  \item Experimental Harano Aji Fonts CN
+    \urltab[github]{\url{https://github.com/trueroad/HaranoAjiFontsCN}}
+  \item Experimental Harano Aji Fonts K1 (Korean, Adobe-Korea1)
+    \urltab[github]{\url{https://github.com/trueroad/HaranoAjiFontsK1}}
+\end{itemize}
+
+あるいは、IBM Plex Sansを利用することもできます。しかしながら、{\munja}フォントはAdobe-KRに準拠しているため利用できないことに注意してください。
+
+日本語用の原ノ味フォントと同様に、抜けているCIDグリフが多数あります。そのため、\cmd{CID(T|C|K)}を利用するには貧弱なところがあります。
+
+\subsection{フォントライセンスの注意}
+
+話は少しそれますが、フォントを利用する際にはライセンスに注意してください。商業利用の不可の他にも、ソフトに付随するがそれ以外では使用してはならないなどの規約が存在することがあります。
+
+より詳細には以下の{\TeXWiki}を参照してください。
+
+\begin{itemize}
+  \item フォントの埋め込みとライセンス - {\TeXWiki}
+  \tabto{2zw}\href{https://texwiki.texjp.org/?%E3%83%95%E3%82%A9%E3%83%B3%E3%83%88%E3%81%AE%E5%9F%8B%E3%82%81%E8%BE%BC%E3%81%BF%E3%81%A8%E3%83%A9%E3%82%A4%E3%82%BB%E3%83%B3%E3%82%B9}{\ttfamily https://texwiki.texjp.org/?{\jpinurl フォントの埋め込みとライセンス}}
+\end{itemize}
+
+特に有償フォントはよく知られたフォントで1つ数万円します。そのため、複数書体のセットでもかなり高額なものになります。\sidenote{これを受けて、一部では「ヒラギノフォントを買ったらMacbookが付いてきた」と言うような冗談も存在します。}
+
+そのため、高額さゆえに安易にフォントを流用すると問題になる可能性があることを忘れないようにしましょう。
+
+
+
+
+
+\end{document}

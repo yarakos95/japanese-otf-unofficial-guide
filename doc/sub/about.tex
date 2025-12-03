@@ -1,0 +1,169 @@
+\documentclass[../otf-unofficial-guide]{subfiles}
+\begin{document}
+
+\section{\texorpdfstring{\pkg{otf}}{otfパッケージ}とは}
+
+\pkg{otf}とは何かを理解するために、まずは齋藤修三郎{\氏}による2004年3月に作成された「OTFパッケージについて」の「はじめに」を紹介します。\sidenote{当然ですが、2004年当時の情報であることに注意してください。}
+
+\begin{quotation}
+  OTFパッケージの主な機能は「Open Type Fontに含まれている文字」を使うことです。
+  {\pLaTeX}では、通常JIS X 208の文字種しか扱えません。
+  文字種の拡大のために、いろいろなパッケージが構築されています。
+  \ruby{然}{しか}し\ruby{乍}{なが}ら、商業出版に耐えうる高品質の書体を使うことは出来ませんでした。
+  このパッケージはOpen Type Fontに含まれるグリフを有効に利用するため開発されました。
+  \marginpar{\scriptsize 当時の\pkg{otf}で想定されていた``Open Type Font''とは、ヒラギノフォント基本6書体であったようです。}
+  文字集合として、JIS X 213に完全対応しています。
+  また、Unicode 3.0相当の字体をUTF16のコードで指定することにより使うこと出来ます。
+  日本語に限っては、Adobe-Japan1-5のCID値を直接指定することにより、UTF16のサロゲート・ペアに入っている字体も使うことが可能です。
+  CID値による直接指定方式を採用したことにより、Adobe-Japan1-5に含まれる様ヽな異体字および記号類を用いることも可能になっています。
+  対応しているdviwareは\terminalCMD{udvips}, \terminalCMD{dvipdfmx}, \terminalCMD{Mxdvi}, \terminalCMD{xdvi}, \terminalCMD{dviout}です。
+  ただし、\terminalCMD{dviout}は一部制限があるようです。
+
+  OTFパッケージはUTFパッケージの拡張バージョンです。本来はUTFパッケージのバージョン2.0に相当する物ですが、名称を変更しました。
+
+  尚、OTFパッケージの扱えるグリフはAdobe-Japan1-5のプロポーショナルでないものです。
+\end{quotation}
+
+このような背景で作成されたパッケージが\pkg{otf}です。
+今日では\pkg*{japanese-otf}として{\CTAN}に集録されており{\TeXLive}にも含まれています。
+
+\subsection{\texorpdfstring{\pkg{otf}}{otfパッケージ}が提供する機能}
+
+\pkg{otf}が提供する機能は主に以下が挙げられます。
+
+\begin{enumerate}[resume=features]
+  \item \label{enu:fm}メトリックを正方形（\( \textmc{\small 高さ}:\textmc{\small 深さ}=88:12 \)）にする%
+        \sidenote{{\pLaTeX}ではメトリックが長方形のmini10が使用されています。}
+  \item \label{enu:jis}JIS X 0208範囲外の文字（JIS外字）をコマンドから扱う%
+        \sidenote{JIS X 0208は第1水準、第2水準のみの範囲です。例えば、「髙」はJISの範囲外にあるので{\pLaTeX}では直接入力が出来ません。}
+  \item \label{enu:cid}CIDの数値による入力
+  \item \label{enu:aj17}{\AdobeJapan}に包括される記号類の使用（\pkg{ajmacros}）
+  \item 多ウェイト化、多書体化（\opt{deluxe}）
+\end{enumerate}
+
+ただし、現在の{\upLaTeX}においては\eghostguarded{\ref{enu:fm}}が標準で利用でき、\ref{enu:jis}\eghostguarded{}に至ってはJIS外字をリテラルに入力できるため、これを目的に\pkg*{japanese-otf}を利用する人は少ないでしょう。
+他方で、{\pLaTeX}ではこれらが標準で利用できないため非常に大きな意味を持ちます。
+
+この他にも、
+\begin{enumerate*}[resume=features, itemjoin=、, afterlabel={\eghostguarded{}}]
+  \item 横組・縦組・ルビ専用の仮名指定（\opt{expert}）
+  \item JIS2004字形への切り替え（\opt{jis2004}）
+  \item 多スクリプト化（\opt{multi}）
+  \item ぶら下げ組への変更（\opt{burasage}）
+\end{enumerate*}
+と言うような機能を有しています。
+
+\subsection{制限}
+
+\pkg*{japanese-otf}は\emph{Adobe-Japan1}に準拠し、扱えるグリフはその内のプロポーショナルではないものです。
+現在では、{\AdobeJapan[7]}に準拠します。加えて、プロポーショナル用ではないグリフは\icon{text}\href{https://github.com/adobe-type-tools/Adobe-Japan1/blob/master/Adobe-Japan1-7_ordering.txt}{\filePath{Adobe-Japan1-7\_ordering.txt}}の内``prop''という語が含まれているカテゴリ \warichu*{\texttt{Proportional}、&\texttt{ProportionalRot}} あるいはサブカテゴリ \warichu*{\texttt{PropHiragana}、\texttt{PropKatakana}、&\texttt{PropVHiragana}、\texttt{PropVKatakana}} 以外のグリフを指します。\sidenote{プロポーショナルとなるグリフは2502あります}
+
+もしもプロポーショナル組をしたい場合は、それに応じたTFMとVFが必要になります。これらのファイルは\pkg*{japanese-otf}に付随しているスクリプトを利用して作成できます。
+
+2018年2月以前に{\TeXLive}に含まれていたヒラギノフォントに関する成果物 \warichu{プロポーショナル組に利用されるTFM・VFのセット} はTLContribに収録されています。
+これは、{\TeXLive}の方針と照らしたとき、非フリーフォントであるヒラギノフォント専用の成果物をディストリビューションに含めることはそぐわないと判断されたためです。
+\<\otfUpdate{2018-02-11}{2366}
+
+\subsection{開発}
+
+\pkg{otf}は\ruby{齋藤}{さい|とう}\ruby{修三郎}{しゅう|ざぶ|ろう}(psitau){\氏}と\ruby{田中}{た|なか}\ruby{琢爾}{たく|じ}(t tk){\氏}\sidenote{{\pTeX}の{\Unicode}拡張版である{\upTeX}を開発している人物です。}を中心に開発されています。
+齋藤{\氏}と田中{\氏}はそれぞれ別にパッケージを開発しており、それぞれのupstreamとなる開発・公開場所は以下のようになっています。\sidenote{齋藤氏は\pkg*{otf}の本体、田中氏は{\upTeX}への拡張を主に開発しているようです。}
+
+\begin{description}[labelsep=0.5zw, font=\gtfamily\mdseries]
+  \item[齋藤修三郎] Open Type Font用VF
+  \tabto{-5zw}\url{https://psitau.kitunebi.com/otf.html}
+  \item[田中琢爾] Support for Japanese OTF files in upLaTeX
+  \tabto{-5zw}\icon{github}\url{https://github.com/t-tk/japanese-otf-uptex}
+\end{description}
+
+開発された成果物は以下の\icon{github}{\GitHub}にあるミラーリポジトリで確認できます。このリポジトリにある成果物が{\TeXLive}で使用されるものであり、コミュニティ版と呼ばれます。もしも\pkg{otf}に問題があった場合はこのリポジトリにIssueを提出してください。
+
+\begin{itemize}
+  \item Unofficial mirror of japanese-otf(-uptex) and hiraprop
+    \urltab[github]{\url{https://github.com/texjporg/japanese-otf-mirror}}
+\end{itemize}
+
+それぞれの成果物はミラーリポジトリ上で、\icon{folder}\filePath{japanese-otf/}となっているフォルダ内が齋藤{\氏}、\icon{folder}\filePath{japanese-otf-uptex/}となっているフォルダ内が田中{\氏}のものとなっています。ある程度の更新がなされた場合、ミラーリポジトリでまとめて「日本語{\TeX}開発コミュニティ版」として{\CTAN}に投稿されます。\sidenote{例えば、2025年7月24日リリースのコミュニティ版には、「TeX JP org, v1.7b8 psitau, u0.32 ttk」と記載されています}
+
+変更履歴はミラーリポジトリの\icon{text}\href{https://github.com/texjporg/japanese-otf-mirror/blob/master/ChangeLog.md}{\filePath{ChangeLog.md}}を参照してください。
+また、これよりも古い版の履歴を確認したい場合は、\icon{text}\href{https://github.com/texjporg/japanese-otf-mirror/blob/master/japanese-otf/readme-ja.txt}{\filePath{japanese-otf/readme-ja.txt}}を参照してください。
+
+\section{依存関係}
+
+\begin{itemize}
+  \item フォーマット   \tabto{8zw}\pLaTeX
+  \item {\TeX}エンジン \tabto{8zw}\pLaTeX、\upLaTeX
+  \item DVIウェア      \tabto{8zw}\terminalCMD{dviout}、\terminalCMD{Mxdvi}、\terminalCMD{xdvi}、および\terminalCMD{dvips}、\terminalCMD{udvips}、{\dvipdfmx}
+  \item 依存パッケージ
+  \begin{itemize}[labelsep=0.3zw]
+    \item \pkg+{keyval}
+    \item \pkg{ajmacros}
+    \item \pkg{mlcid}（\opt{multi}有効時）
+    \item \pkg{mlutf}（\opt{multi}有効時）
+  \end{itemize}
+\end{itemize}
+
+\section{バンドルパッケージ}
+
+\pkg*{japanese-otf}は次の5つのパッケージをバンドルしています。
+
+\begin{description}[font=\sffamily\mdseries]
+  \item[otf]        \tab \pkg*{japanese-otf}の本体
+  \item[ajmacros]   \tab {\AdobeJapan}に包括される記号類の提供
+  \item[mlcid]      \tab {\fantizi}、{\jiantizi}、{\hankgo}のための\cmd{CID}バリアントの提供
+  \item[mlutf]      \tab {\fantizi}、{\jiantizi}、{\hankgo}のための\cmd{UTF}バリアントの提供
+  \item[redeffont]  \tab 見出しフォントを変更するためのコマンドの提供
+\end{description}
+
+\subsection{\texorpdfstring{\pkg{ajmacros}}{ajmacrosパッケージ}}
+
+\pkg{ajmacros}は{\AdobeJapan}で規定される記号類のコマンド提供を提供しています。例えば、\cmd{ajNijuMaru\{5\}}や\cmd{ajLig\{\jpincmd{ミリ}\}}\sidenote{\ajNijuMaru{5}や\ajLig{ミリ}}のような記号を出力するためのコマンド集パッケージです。
+
+\pkg{otf}から自動的に読み込まれますが、\opt{nomacros}を有効にすると読み込まれなくなります。
+
+\pkg{ajmacros}は以下のようにプリアンブルで読み込むことも可能ですが、内部で\pkg{otf}を読み込むためあまり意味はないと思われます。
+
+\begin{texsource}
+\usepackage{ajmacros}
+\end{texsource}
+
+\subsection{\texorpdfstring{\pkg{redeffont}}{redeffontパッケージ}}
+
+\pkg{redeffont}は\pkg{otf}とは独立したパッケージです。そのため、利用する場合はこれをプリアンブルで別個に読み込む必要があります。
+
+\begin{texsource}
+\usepackage{redeffont}
+\end{texsource}
+
+\pkg*{redeffont}は見出し用のコマンド（\cmd{section}等）のフォントを変更するための\cmd{headfont}を定義するパッケージです。この\cmd{headfont}を利用して以下のように再定義することで、見出しに当たるフォントを変更できます。
+
+\begin{texsource}
+\renewcommand{\headfont}{\sffamily\bfseries}
+\end{texsource}
+
+ただし、\cls*{jsclasses}、\cls*{ltjsclasses}、\cls*{BXjscls}では\cmd{headfont}をすでに定義されているため、\pkg*{redeffont}は必要ありません。また、\cls{jlreq}では\pkg{redeffont}を利用できません。
+
+\section{パッケージ読み込み}
+
+\pkg{otf}は{\CTAN}に集録されているため、{\TeXLive}を利用していれば自動的にダウンロードされています。（\texttt{collection-langjapanese}に収録）
+
+そのため、ふつうに\cmd{usepackage}によって読み込むだけで十分です。
+
+\begin{texsource}
+\usepackage{otf}
+\end{texsource}
+
+パッケージオプションを指定する場合は以下のようにします。
+
+\begin{texsource}
+\usepackage[uplatex, deluxe, jis2004]{otf}
+\end{texsource}
+
+これらを踏まえて、例えば{\upLaTeXdvipdfmx}で利用する場合には、次のようなプリアンブルになるはずです。\sidenote{\cls*{jsarticle}で指定された\opt*{uplatex}グローバルオプションは\pkg*{otf}に引き継いで読み込まれます。}
+
+\begin{texsource}
+\documentclass[uplatex, dvipdfmx, a4paper]{jsarticle}
+\usepackage[deluxe, jis2004]{otf}
+\end{texsource}
+
+\end{document}

@@ -1,0 +1,30 @@
+\documentclass[../otf-unofficial-guide]{subfiles}
+\begin{document}
+
+
+\section{\texorpdfstring{\cls{jlreq}}{jlreq}との互換}
+
+\cls+{jlreq}を使用する場合、少し注意する必要があります。
+
+\pkg{otf}ではフォントメトリックを{\pLaTeX}デフォルトのmin10からJISに変更します。一方で、\cls{jlreq}でも特有のフォントメトリックを使用します。
+
+そのため、\cls{jlreq}を使用下で多書体化するために\opt{deluxe}付きの\pkg{otf}を使うと、フォントメトリックが\cls{jlreq}のものとは異なるものになってしまいます。
+
+これを回避するために、\cls{jlreq}では\pkg+{jlreq-deluxe}を利用します。このパッケージは\pkg+{pxjodel}を介してデフォルトで\pkg{otf}が読み込まれ\opt{deluxe}が有効になっています。
+
+\begin{texsource}
+\documentclass[uplatex, dvipdfmx, paper=a4paper]{jlreq}
+\usepackage{jlreq-deluxe}
+\end{texsource}
+
+フォントメトリックを\cls{jlreq}に揃えるため、前述した\pkg{otf}に特有の感嘆符・疑問符の右側にアキが作られる機能はなくなります。\sidenote{本ドキュメントでは\cls{jlreq}を用いていますが、\pkg{otf}の機能を説明するために\pkg{jlreq-deluxe}を使わずに\pkg*{otf}＋\opt{deluxe}を使用しています。}
+
+\subsection{\texorpdfstring{\cls{jlreq} (\opt{deluxe})＋\pkg{pxchfon} (\opt{unicode})}{jlreq (deluxe)＋pxchfon (unicode)}}
+
+\pkg+{pxchfon}は{\upLaTeX*}でフォントを簡単に変更するためのパッケージです。このパッケージでは、\opt{unicode}を有効にすることで非AJ1なフォントも出来る限りCIDを利用した
+
+
+
+
+
+\end{document}

@@ -1,0 +1,21 @@
+\documentclass[uplatex, dvipdfmx, jis2004]{jlreq}
+\usepackage[T1]{fontenc}
+\usepackage[deluxe]{otf}
+\usepackage[unicode, noalphabet]{pxchfon}
+\setminchofont{SourceHanSerif-Regular.otf}
+\usepackage{tcolorbox} \tcbuselibrary{skins, breakable}
+\AtBeginDvi{\special{pdf:mapline upnmlminrn-h unicode notoemoji-regular.ttf}}
+\usepackage{bxghost}
+
+\input{../setup-base.tex}
+\begin{document}
+
+\section{非Adobe-Japan1フォント}
+
+\pkg{pxchfon}を利用して非Adobe-Japan1フォントに変更する場合、Adobe-Japan1に収録されていないグリフを\cmd{UTF}を
+
+\UTF{1F200}
+👀🤔
+\UTF{1F18F}\UTF{1F18E}
+
+\end{document}

@@ -1,0 +1,46 @@
+\documentclass[../otf-unofficial-guide]{subfiles}
+\begin{document}
+
+\section{スクリプト}
+
+{\noindent}\emph{\ajQuote{11}{注意}本マニュアルでは使い方を解説しません。}
+
+\pkg{japanese-otf}にはTFMやVFを生成するためのスクリプトがあります。{\TeXLive}では以下のディレクトリに配置されています。
+
+\begin{directory}
+  {\textdollar}TEXMFDIST/source/fonts/japanese-otf/
+\end{directory}
+
+あるいは、\textsf{japanese-otf-mirror}リポジトリから取得することも可能です。
+\urltab{\url{https://github.com/texjporg/japanese-otf-mirror}}
+
+生成に必要なファイルとフォルダは以下の通りです。（{\TeXLive}とディレクトリ構造が異なりますが同じものです）
+\sidenote{git sparse checkoutを使うと必要なファイルのみを取得できます。}
+
+\begin{directory}
+japanese-otf-mirror/
+  \brtab{0.5zw}├── japanese-otf/
+  \brtab{0.5zw}│\tabto{5zw}├── basepl/（略）
+  \brtab{0.5zw}│\tabto{5zw}├── script/（略）
+  \brtab{0.5zw}│\tabto{5zw}├── makeotf
+  \brtab{0.5zw}│\tabto{5zw}└── mkjvf
+  \brtab{0.5zw}└── japanese-otf-uptex/
+                \brtab{5zw}├── basepl/（略）
+                \brtab{5zw}├── script/（略）
+                \brtab{5zw}├── umakeotf
+                \brtab{5zw}├── umakeotf{\_}brsg
+                \brtab{5zw}├── umakeotf{\_}jis04
+                \brtab{5zw}├── umakeotf{\_}pre
+                \brtab{5zw}├── umakeotf{\_}prop
+                \brtab{5zw}└── umkjvf
+\end{directory}
+
+これに加えて、\filePath{japanese-otf-uptex}には\filePath{IVD{\_}Sequences.txt}というファイルが必要になります。これは以下のページから取得できます。このファイルは\filePath{japanese-otf-uptex/script/}に配置します。
+\urltab{\url{https://unicode.org/ivd/data/2025-07-14/IVD_Sequences.txt}}
+
+もしも、新たなフォントを追加するために利用する場合は\filePath{makeotf}および\filePath{umakeotf}を参考に適当に書き換えると良いです。
+ただし、\filePath{script/}にあるスクリプトはデフォルトで出力される2書体あるいは7書体のために構成されているため、フォント名を変更する場合はこれらも編集する必要があることに注意してください。
+
+これらのスクリプトは\terminalCMD{ovp2ovf}を使用します。これはomegawareと言うパッケージに収録されています。
+
+\end{document}

@@ -1,0 +1,233 @@
+\documentclass[../supplement]{subfiles}
+\begin{document}
+
+\section{複数の字形を書き分ける}
+
+同一のUnicodeコードポイントを持つ文字に複数の字形が存在している場合は多くあります。これを書き分けたい場合、そのまま入力する方法や\cmd{UTF}では上手くいきません。
+
+第一に、どの状況でも同じ字形の文字を利用するには\emph{\cmd{CID}を使うことが最も簡単で強力}です。この方法では\opt{jis2004}の影響も受けません。
+
+一方で、CID値を覚えて入力したり、入力した文字を{\TeX}ソースファイルから読むには難解になってしまうことがあります。
+
+\subsection{\texorpdfstring{\cmd{ajVar}}{{\textbackslash}ajVar}を利用する}
+
+\pkg{ajmacros}から提供されている\cmd{ajVar}を利用する方法があります。例えば、「葛」の異体字「\ajVar{葛}」を以下のようにプリアンブルで定義することで、\cmd{ajVar\{\jpincmd{葛}\}}として利用できます。この方法では\cmd{CID}を間接的に利用しています。そのため、\opt{jis2004}の影響を受けません。
+
+\begin{demosource}*
+  {\textbackslash}ajCIDVarDef\{葛\}\{1481\}\\
+  \vfil
+  葛と{\textbackslash}ajVar\{葛\}
+  \tcblower
+  \pbox{\scriptsize (プリアンブル内定義)}\\[-1.3zw]
+  {\color{gray9}\rule{\linewidth}{0.15zw}}
+  \large
+  \pbox{葛と\ajVar{葛}}
+\end{demosource}
+
+これらのコマンドの詳細は\icon{pdf}\filePath{ajmacros-unofficial-guide.pdf}を参照してください。
+
+\subsection{異体字セレクタを利用する}
+
+基本的に\cmd{CID}を利用することで字形を書き分けることは可能ですが、一方で文書を作成しているときにCID値を見てどの文字になっているのか判断する、あるいは必要な文字のCID値は何かを覚えているのは非常に面倒です。
+異体字は見たままに編集できると楽です。
+
+{\upLaTeXdvipdfmx}下における異体字セレクタ(VS: Variation Selector)には、3つの表現方法があります。
+
+\begin{enumerate}[itemsep=0.7zw]
+  \item \textlrangle{基底文字}\textlrangle{VS Unicode値}
+    \\\tab
+      例：\inlinecode{\jpincmd{\textgt{葛}}\textlrangle{\UCN{E0100}}},
+      \inlinecode{\jpincmd{\textgt{社}}\textlrangle{\UCN{FE00}}}
+    \label{enu:vs-literal}
+  \item \textlrangle{基底文字}\cmd{kchar"\textlrangle{VS Unicode値}}
+    \\\tab
+      例：\inlinecode{\jpincmd{葛}\textbackslash {kchar"E0100}},
+      \inlinecode{\jpincmd{社}\textbackslash {kchar"FE00}}
+  \item \textlrangle{基底文字}\cmd{symbol\{"\textlrangle{VS Unicode値}\}}
+    \\\tab
+      例：\inlinecode{\jpincmd{葛}\textbackslash {symbol\{"E0100\}}},
+      \inlinecode{\jpincmd{社}\textbackslash {symbol\{"FE00\}}}
+\end{enumerate}
+
+特に\ref{enu:vs-literal}の方法を使って異体字セレクタを入力する際には、次のようなページを利用すると簡便に異体字に変更できます。
+
+\begin{itemize}
+  \item 異体字セレクタセレクタ
+  \urltab{\url{https://747.codeberg.page/vsselector/}}
+\end{itemize}
+
+一方で、{\upLaTeXdvipdfmx}下での扱いは異体字シーケンスによって異なります。
+
+異体字を指定する方法には次に示す2つの系統があります。これらは異体字シーケンスと呼ばれます。
+\sidenote{異体字セレクタを用いて元となる基底文字を異体字に変更する全体を異体字シーケンスと呼びます。}
+
+\begin{itemize}
+  \item IVS: Ideographic Variation Sequence
+  \item SVS: Standardized Variation Sequence
+\end{itemize}
+
+これらの異体字シーケンスはどちらも同じ書き方で異体字を指定しますが、マッピングの結果が異なります。
+
+{\upLaTeXdvipdfmx}では字形は異体字でありながら基底文字にマッピングされていたり、CJK互換漢字に置き替える形で機能します。
+\sidenote{Typstのようなモダンなアプリケーションでは、異体字セレクタを用いて字形を選択するフォントの機能を利用します。}
+
+すなわち、
+\kanjiVS{葛}{E0100}は字形は異なるものの「葛\symbol{"E0100}\subUCN{845B}」として、\kanjiVS{社}{FE00}はこれに対応するCJK互換漢字である「社\symbol{"FE00}\subUCN{FA4C}」として出力されます。（実際にコピペして確認してみてください）
+
+
+\subsubsection{IVS: Ideographic Variation Sequence}
+
+Adobe-Japan1で利用できるIVSは以下のページから一覧で見ることが出来ます。およそ1200の漢字が対象になるようです。
+
+\begin{itemize}
+  \item AdobeJapan1 IVS異体字一覧
+  \urltab{\url{https://www.wakufactory.jp/densho/font/ivs_aj.html}}
+\end{itemize}
+
+例えば、以下の「今」とその異体字「今\symbol{"E0100}」の例を見てください。
+
+\begin{center}
+  \begin{booktabular}{>{\sffamily}c*{2}{C{10zw}}}
+            & {\large\CID{2067}}\textsubscript{(基底文字)}
+            & {\large\CID{13780}} \\
+    \midrule
+    Unicode & \UCN{5C06} (＋\UCN{E0100}) & \UCN{5C06}＋\UCN{E0101} \\
+    CID     & \CIDN{2067}                & \CIDN{13780}              \\
+  \end{booktabular}
+\end{center}
+
+\opt{jis2004}の影響を受ける漢字であっても以下のように書き分けることが可能です。以下の「葛」の例を見てください。
+
+\begin{center}
+  \begin{booktabular}{>{\sffamily}c*{2}{C{10zw}}}
+            & {\large\CID{1481}}\textsubscript{(JIS90字形)}
+            & {\large\CID{7652}}\textsubscript{(JIS2004字形)} \\
+    \midrule
+    Unicode & \UCN{845B} (＋\UCN{E0100}) & \UCN{845B} (＋\UCN{E0101}) \\
+    CID     & \CIDN{1481}              & \CIDN{7652}              \\
+  \end{booktabular}
+\end{center}
+
+ただし、\opt{jis2004}が有効になっているかどうかで基底文字が変わります。そのため、常に一方の字形を出力したい場合は、どちらの字形であっても異体字セレクタを与えておく必要があります。
+一方で、\opt{jis2004}に影響されない漢字は異体字のみに異体字セレクタを与えれば良いです。
+
+ちなみに、Adobe-Japan1で最も多いIVSを持つ文字は「\UTF{9089}\subUCN{9089}」です。以下のような間違い探しができるので楽しいですね。
+
+\begin{demosource}
+  邉、
+  邉{\textbackslash}symbol\{"E0101\}、
+  邉{\textbackslash}symbol\{"E0102\}、\\
+  邉{\textbackslash}symbol\{"E0103\}、
+  邉{\textbackslash}symbol\{"E0104\}、\\
+  邉{\textbackslash}symbol\{"E0105\}、
+  邉{\textbackslash}symbol\{"E0106\}、\\
+  邉{\textbackslash}symbol\{"E0107\}、
+  邉{\textbackslash}symbol\{"E0108\}、\\
+  邉{\textbackslash}symbol\{"E0109\}、
+  邉{\textbackslash}symbol\{"E010A\}、\\
+  邉{\textbackslash}symbol\{"E010B\}、
+  邉{\textbackslash}symbol\{"E010C\}、\\
+  邉{\textbackslash}symbol\{"E010D\}、
+  邉{\textbackslash}symbol\{"E010E\}。
+  \tcblower
+  邉、
+  邉\symbol{"E0101}、
+  邉\symbol{"E0102}、
+  邉\symbol{"E0103}、
+  邉\symbol{"E0104}、
+  邉\symbol{"E0105}、
+  邉\symbol{"E0106}、
+  邉\symbol{"E0107}、
+  邉\symbol{"E0108}、
+  邉\symbol{"E0109}、
+  邉\symbol{"E010A}、
+  邉\symbol{"E010B}、
+  邉\symbol{"E010C}、
+  邉\symbol{"E010D}、
+  邉\symbol{"E010E}。
+\end{demosource}
+
+これに次いでIVSが多い文字は「\UTF{908A}\subUCN{908A}」です。
+
+\begin{demosource}
+  邊、
+  邊{\textbackslash}symbol\{"E0101\}、\\
+  邊{\textbackslash}symbol\{"E0102\}、
+  邊{\textbackslash}symbol\{"E0103\}、\\
+  邊{\textbackslash}symbol\{"E0104\}、
+  邊{\textbackslash}symbol\{"E0105\}、\\
+  邊{\textbackslash}symbol\{"E0106\}、
+  邊{\textbackslash}symbol\{"E0107\}。
+  \tcblower
+  邊、
+  邊\symbol{"E0101}、
+  邊\symbol{"E0102}、
+  邊\symbol{"E0103}、
+  邊\symbol{"E0104}、
+  邊\symbol{"E0105}、
+  邊\symbol{"E0106}、
+  邊\symbol{"E0107}。
+\end{demosource}
+
+これでどの字を用いたワタナベさんが来ても書き表せそうですね。
+
+\subsubsection{SVS: Standardized Variation Sequence}
+
+{\upLaTeXdvipdfmx}では、SVSを利用するとCJK互換漢字に置き替える形で機能します。
+\sidenote{そもそもCJK互換漢字におけるSVSは、統合漢字から指定する目的で構築されています。}
+
+この置き替えはリポジトリの\href{https://github.com/texjporg/japanese-otf-mirror/blob/master/japanese-otf-uptex/script/svs_list_j.txt}{\filePath{japanese-otf-uptex/script/svs{\_}list{\_}j.txt}}を見ると146の文字が対象になっていることが分かります。
+基本的に、異体字セレクタは\UCN{FE00}となっています。
+
+ここでは「社」を例にとってみました。
+
+\begin{center}
+  \begin{booktabular}{>{\sffamily}c*{2}{C{10zw}}}
+            & {\large\CID{2302}}
+            & {\large\CID{13348}}\subUCN{FA4C} \\
+    \midrule
+    Unicode & \UCN{793E}  & \UCN{793E}＋\UCN{FE00} \\
+    CID     & \CIDN{2302} & \CIDN{13348}              \\
+  \end{booktabular}
+\end{center}
+
+一方で、SVSがCJK互換漢字に置き換わってしまうことを踏まえると、CJK互換漢字をそのまま入力してしまっても問題ありません。
+
+\begin{demosource}[0.3]
+  社{\textbackslash}symbol\{"FE00\}、
+  社、
+  {\textbackslash}UTF\{FA4C\}、
+  {\textbackslash}CID\{13348\}。
+  \tcblower
+  社\symbol{"FE00}、
+  社、
+  \UTF{FA4C}、
+  \CID{13348}。
+\end{demosource}
+
+ちなみに、このSVSで表現される文字はIVSでも表現できますが、やはりCJK互換漢字に置き換わる仕様は変わりません。
+
+一方で、この仕様のデメリットとして、CJK互換漢字にマッピングされているためにPDF内の検索が容易ではない可能性があることが挙げられます。
+
+すでに示したように、「社\subUCN{793E}」と「社\subUCN{FA4C}」は異なる文字です。そのため、これらの文字が別の文字として区別されると認識した上で検索する必要があります。
+\sidenote{ビューワにも依りますが、手元ではAdobe Acrobat ReaderやSumatraPDFでは区別していました。一方で、ChromeやMS Edgeのブラウザに内蔵されたビューワ、あるいはPDF.jsでは区別しませんでした。}
+
+\section{異体字セレクタと\texorpdfstring{\pkg
+{pxcjkcat}}{pxcjkcatパッケージ}}
+
+和文欧文の扱いを切り替える機能を持つ\opt{preferecjk}等付きの\pkg*{pxcjkcat}を追加すると、異体字セレクタが上手く処理されないことがあります。これは、\pkg*{pxcjkcat}の文字ブロックの分割や和文カテゴリの規定値が\upTeX の改版に伴って変化することに追従するためです。
+
+例えば、\kanjiUTF{今}{E0101}あるいは\kanjiVS{今}{E0101}、またはJIS2004で変更のある\kanjiUTF{葛}{E0100}あるいは\kanjiVS{葛}{E0100} で入力する場合の例を紹介します。
+
+\begin{texsource}
+% upLaTeX＋dvipdfmx
+\documentclass[uplatex, dvipdfmx, a4paper]{jsarticle}
+\usepackage[jis2004]{otf}
+\usepackage[real, prefercjk]{pxcjkcat}
+\begin{document}
+  今と今\symbol{"E0101}、
+  葛と葛\symbol{"E0100}。
+\end{document}
+\end{texsource}
+
+\end{document}

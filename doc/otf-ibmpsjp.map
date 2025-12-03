@@ -1,0 +1,39 @@
+% Text, JIS90
+uphibmpsjpr-h	UniJIS-UTF16-H	IBMPlexSansJP-Regular.otf
+uphibmpsjpr-v	UniJIS-UTF16-V	IBMPlexSansJP-Regular.otf
+uphibmpsjpb-h	UniJIS-UTF16-H	IBMPlexSansJP-Bold.otf
+uphibmpsjpb-v	UniJIS-UTF16-V	IBMPlexSansJP-Bold.otf
+
+upnmlibmpsjpr-h	UniJIS-UTF16-H	IBMPlexSansJP-Regular.otf
+upnmlibmpsjpr-v	UniJIS-UTF16-V	IBMPlexSansJP-Regular.otf
+upnmlibmpsjpb-h	UniJIS-UTF16-H	IBMPlexSansJP-Bold.otf
+upnmlibmpsjpb-v	UniJIS-UTF16-V	IBMPlexSansJP-Bold.otf
+
+% Text, JIS2004
+uphibmpsjprn-h	UniJIS2004-UTF16-H	IBMPlexSansJP-Regular.otf
+uphibmpsjprn-v	UniJIS2004-UTF16-V	IBMPlexSansJP-Regular.otf
+uphibmpsjpbn-h	UniJIS2004-UTF16-H	IBMPlexSansJP-Bold.otf
+uphibmpsjpbn-v	UniJIS2004-UTF16-V	IBMPlexSansJP-Bold.otf
+
+upnmlibmpsjprn-h	UniJIS2004-UTF16-H	IBMPlexSansJP-Regular.otf
+upnmlibmpsjprn-v	UniJIS2004-UTF16-V	IBMPlexSansJP-Regular.otf
+upnmlibmpsjpbn-h	UniJIS2004-UTF16-H	IBMPlexSansJP-Bold.otf
+upnmlibmpsjpbn-v	UniJIS2004-UTF16-V	IBMPlexSansJP-Bold.otf
+
+% CID
+otf-cjibmr-h	Identity-H	IBMPlexSansJP-Regular.otf
+otf-cjibmr-v	Identity-V	IBMPlexSansJP-Regular.otf
+otf-cjibmb-h	Identity-H	IBMPlexSansJP-Bold.otf
+otf-cjibmb-v	Identity-V	IBMPlexSansJP-Bold.otf
+
+% Unicode JIS90
+otf-ujibmr-h	UniJIS-UTF16-H	IBMPlexSansJP-Regular.otf
+otf-ujibmr-v	UniJIS-UTF16-V	IBMPlexSansJP-Regular.otf
+otf-ujibmb-h	UniJIS-UTF16-H	IBMPlexSansJP-Bold.otf
+otf-ujibmb-v	UniJIS-UTF16-V	IBMPlexSansJP-Bold.otf
+
+% Unicode JIS2004
+otf-ujibmrn-h	UniJIS2004-UTF16-H	IBMPlexSansJP-Regular.otf
+otf-ujibmrn-v	UniJIS2004-UTF16-V	IBMPlexSansJP-Regular.otf
+otf-ujibmbn-h	UniJIS2004-UTF16-H	IBMPlexSansJP-Bold.otf
+otf-ujibmbn-v	UniJIS2004-UTF16-V	IBMPlexSansJP-Bold.otf

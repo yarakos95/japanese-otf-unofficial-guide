@@ -1,0 +1,210 @@
+\documentclass[../supplement]{subfiles}
+\begin{document}
+
+\section{他パッケージとの併用}
+
+\begin{itemize}
+  \item \pkg{pxchfon}
+  \item \pkg{pxbabel}
+  \item \pkg{pxjahyper}
+  \item \cls{jlreq}
+\end{itemize}
+
+\subsection{\texorpdfstring{\pkg{pxchfon}}{pxchfonパッケージ}：フォントを変更する}
+
+フォントを変更するには\pkg{pxchfon}を利用します。\sidenote{\pkg*{pxchfon}を利用した方法は{\dvipdfmx}で実行する場合にのみ有効です。そのため、\terminalCMD{dvips}等の他のDVIドライバでは使えない方法であることに留意してください。}
+
+\pkg*{pxchfon}ではプリセットとして構成されているフォント群を指定する方法と個別に指定する方法の2つがあります。
+
+\subsubsection{プリセット指定}
+
+プリセットとして構成されているフォントの詳細は\pkg*{pxchfon}のパッケージマニュアルを参照してほしいですが、ここでは簡単にヒラギノフォントを指定する場合を紹介します。
+
+\begin{texsource}
+\usepackage[noalphabet, hiragino-elcapitan-pron]{pxchfon}
+\end{texsource}
+
+これによってMac OS X El Capitanに搭載されているPr6N版のヒラギノフォントに変更されます。
+
+あるいは、源ノフォントを指定する場合は以下のようにします。\sidenote{源ノフォントはAJ1に対応しないため、\opt{unicode}が必要になります。一方で、原ノ味フォントはAJ1に対応するために源ノフォントを利用して作成されています。}
+
+\begin{texsource}
+\usepackage[noalphabet, sourcehan, unicode]{pxchfon}
+\end{texsource}
+
+\subsubsection{基本2書体の個別変更}
+
+明朝体、ゴシック体を個別に変更するために、以下の2つのコマンドが提供されています。
+
+\begin{itemize}
+  \item 明朝体     \tabto{5.5zw}\cmd{setminchofont}
+  \item ゴシック体 \tabto{5.5zw}\cmd{setgothicfont}
+\end{itemize}
+
+{\fantizi}、{\jiantizi}、{\hankgo}の2書体を個別に変更するために、以下のコマンドが提供されています。
+
+\begin{itemize}
+  \item {\fantizi}
+  \begin{itemize}
+    \item 明朝体{\footnotesize（明体）}:     \tabto{10zw} \cmd{settchineseminchofont}
+    \item ゴシック体{\footnotesize（黒体）}: \tabto{10zw} \cmd{settchinesegothicfont}
+  \end{itemize}
+  \item {\jiantizi}
+  \begin{itemize}
+    \item 明朝体{\footnotesize（宋体）}:     \tabto{10zw} \cmd{setschineseminchofont}
+    \item ゴシック体{\footnotesize（黒体）}: \tabto{10zw} \cmd{setschinesegothicfont}
+  \end{itemize}
+  \item {\hankgo}
+  \begin{itemize}
+    \item 明朝体:     \tabto{10zw} \cmd{setkoreanminchofont}
+    \item ゴシック体: \tabto{10zw} \cmd{setkoreangothicfont}
+  \end{itemize}
+\end{itemize}
+
+
+\subsubsection{多書体化されたフォントの個別変更}
+
+\pkg{otf}は\opt{deluxe}を有効にすることで多書体化が可能です。これによって、デフォルトでは原ノ味明朝3ウェイト、原ノ味ゴシック3ウェイトが利用できるようになり、丸ゴシック体として原ノ味ゴシックのミディアムウェイトが割り当てられるようになります。
+\sidenote{原ノ味には丸ゴシック体に対応するフォントが無いため、ウェイトの異なるフォントが代用されています。}
+
+日本語フォントを個別に変更には以下のコマンドを使用します。
+
+\begin{itemize}
+  \item 明朝体
+  \begin{itemize}
+    \item 細ウェイト: \tabto{7zw} \cmd{setlightminchofont}
+    \item 中ウェイト: \tabto{7zw} \cmd{setmediumminchofont}
+    \item 太ウェイト: \tabto{7zw} \cmd{setboldminchofont}
+  \end{itemize}
+  \item ゴシック体
+  \begin{itemize}
+    \item 中ウェイト:   \tabto{7zw} \cmd{setmediumgothicfont}
+    \item 太ウェイト:   \tabto{7zw} \cmd{setboldgothicfont}
+    \item 極太ウェイト: \tabto{7zw} \cmd{setxboldgothicfont}
+  \end{itemize}
+  \item 丸ゴシック体:   \tabto{9zw} \cmd{setmarugothicfont}
+\end{itemize}
+
+{\fantizi}、{\jiantizi}、{\hankgo}を個別に変更するために、以下のコマンドが提供されています。ただし、\eghostguarded{\textlrangle{lang name}}には\texttt{tchinese}、\texttt{schinese}、\texttt{korean}のいずれかが入ります。
+
+\begin{itemize}
+  \item 明朝体
+  \begin{itemize}
+    \item 細ウェイト: \tabto{7zw} \cmd{set\textlrangle{lang name}lightminchofont}
+    \item 中ウェイト: \tabto{7zw} \cmd{set\textlrangle{lang name}mediumminchofont}
+    \item 太ウェイト: \tabto{7zw} \cmd{set\textlrangle{lang name}boldminchofont}
+  \end{itemize}
+  \item ゴシック体
+  \begin{itemize}
+    \item 中ウェイト:   \tabto{7zw} \cmd{set\textlrangle{lang name}mediumgothicfont}
+    \item 太ウェイト:   \tabto{7zw} \cmd{set\textlrangle{lang name}boldgothicfont}
+    \item 極太ウェイト: \tabto{7zw} \cmd{set\textlrangle{lang name}xboldgothicfont}
+  \end{itemize}
+  \item 丸ゴシック体:   \tabto{9zw} \cmd{set\textlrangle{lang name}marugothicfont}
+\end{itemize}
+
+
+\paragraph{実例}
+
+ここでは、本ドキュメントで実践している「丸ゴシック体を源柔ゴシック\sidenote{源柔ゴシックは、原ノ味フォントと同じ源ノフォントを基に作成されています。}への変更」と「\UTFT{7E41}・\UTFC{7B80}・\UTFK{D55C}のフォントを原ノ味フォントへの変更」の方法を簡易的に説明します。
+
+それぞれのフォントは以下のページから取得できます。
+
+\begin{itemize}
+  \item 源柔ゴシック (げんじゅうゴシック) | 自家製フォント工房
+    \sidenote{数はそれほど多くないですが、\href{https://fontfree.me/category/marugo}{フォントフリー}と言う日本語フォント投稿サイトを見ると魅力的な丸ゴシック体の無償フォントを見ることが出来ます。}
+    \urltab{\url{http://jikasei.me/font/genjyuu/}}
+  \item Experimental Harano Aji Fonts TW
+    \urltab[github]{\url{https://github.com/trueroad/HaranoAjiFontsTW}}
+  \item Experimental Harano Aji Fonts CN
+    \urltab[github]{\url{https://github.com/trueroad/HaranoAjiFontsCN}}
+  \item Experimental Harano Aji Fonts K1 (Korean, Adobe-Korea1)
+    \sidenote{HaranoAjiFontsKRもありますが、これはAdobe-KRに準拠しているため利用できません。}
+    \urltab[github]{\url{https://github.com/trueroad/HaranoAjiFontsK1}}
+\end{itemize}
+
+ここからファイルをダウンロード・解凍したのち、以下のディレクトリにフォントファイルを配置し、\terminalCMD{mktexlsr}を実行します。
+
+\begin{directory}
+\textdollar TEXMFLOCAL/fonts/truetype/GenjyuuGothic/
+\end{directory}
+
+\begin{directory}
+\textdollar TEXMFLOCAL/fonts/opentype/HaranoAji/\\[-0.5zw]
+　\CID{7514} CN/\\[-0.5zw]
+　\CID{7514} K1/\\[-0.5zw]
+　\CID{7502} TW/
+\end{directory}
+
+以上をもって、プリアンブルで以下のように個別にフォントを指定することで、{\mgfamily 丸ゴシック体}\sidenote{\mgfamily これが源柔ゴシックです}や\UTFT{7E41}・\UTFC{7B80}・\UTFK{D55C}にフォントが割り当てられます。
+
+\begin{texsource}
+\usepackage[noalphabet, haranoaji]{pxchfon}
+%% 源柔フォント
+\setmarugothicfont{GenJyuuGothic-Regular.ttf}
+%% 繁體字
+\settchineseminchofont{HaranoAjiMinchoTW-Regular.otf}
+\settchinesegothicfont{HaranoAjiGothicTW-Bold.otf}
+%% 簡体字
+\setschineseminchofont{HaranoAjiMinchoCN-Regular.otf}
+\setschinesegothicfont{HaranoAjiGothicCN-Bold.otf}
+%% 韓国語
+\setkoreanminchofont{HaranoAjiMinchoK1-Regular.otf}
+\setkoreangothicfont{HaranoAjiGothicK1-Bold.otf}
+\end{texsource}
+
+\subsubsection{フォントライセンスの注意}
+
+話は少しそれますが、フォントを利用する際にはライセンスに注意してください。商業利用の不可の他にも、ソフトに付随するがそれ以外では使用してはならないなどの規約が存在することがあります。
+
+より詳細には以下の{\TeXWiki}を参照してください。
+
+\begin{itemize}
+  \item フォントの埋め込みとライセンス - {\TeXWiki}
+  \urltab{\href{https://texwiki.texjp.org/?フォントの埋め込みとライセンス}{\ttfamily https://texwiki.texjp.org/?{\jpinurl フォントの埋め込みとライセンス}}}
+\end{itemize}
+
+特に有償フォントはよく知られたフォントで1つ数万円します。そのため、複数書体のセットでもかなり高額なものになります。\sidenote{これを受けて、一部では「ヒラギノフォントを買ったらMacbookが付いてきた」と言うような冗談も存在します。}
+
+そのため、高額さゆえに安易にフォントを流用すると問題になる可能性があることを忘れないようにしましょう。
+
+\subsection{\texorpdfstring{\pkg{pxbabel}}{pxbabelパッケージ}：多言語処理内の\texorpdfstring{\cmd{UTF}}{UTF}}
+
+\pkg{pxbabel}は\UTFT{7E41}・\UTFC{7B80}・\UTFK{D55C}をふつうに使用するためのbabelパッケージのCJK特化版です。
+
+\subsection{\texorpdfstring{\pkg{pxjahyper}}{pxjahyperパッケージ}}
+
+\section{\texorpdfstring{\cls{jlreq}}{jlreq文書クラス}との互換}
+
+\cls+{jlreq}を使用する場合、少し注意する必要があります。
+
+\pkg{otf}ではフォントメトリックを{\pLaTeX}デフォルトのmin10からJISに変更します。一方で、\cls{jlreq}でも特有のフォントメトリックを使用します。
+
+そのため、\cls{jlreq}を使用下で多書体化するために\opt{deluxe}付きの\pkg{otf}を使うと、フォントメトリックが\cls{jlreq}のものとは異なるものになってしまいます。
+
+これを回避するために、\cls{jlreq}では\pkg+{jlreq-deluxe}を利用します。このパッケージは\pkg+{pxjodel}を介してデフォルトで\pkg{otf}が読み込まれ\opt{deluxe}が有効になっています。
+
+\begin{texsource}
+\documentclass[uplatex, dvipdfmx, paper=a4paper]{jlreq}
+\usepackage{jlreq-deluxe}
+\end{texsource}
+
+フォントメトリックを\cls{jlreq}に揃えるため、前述した\pkg{otf}に特有の感嘆符・疑問符の右側にアキが作られる機能はなくなります。\sidenote{本ドキュメントでは\cls{jlreq}を用いていますが、\pkg{otf}の機能を説明するために\pkg{jlreq-deluxe}を使わずに\pkg*{otf}＋\opt{deluxe}を使用しています。}
+
+\subsection{\texorpdfstring{\cls{jlreq} (\opt{deluxe})＋\pkg{pxchfon} (\opt{unicode})}{jlreq (deluxe)＋pxchfon (unicode)}}
+
+\pkg+{pxchfon}は{\upLaTeX*}でフォントを簡単に変更するためのパッケージです。このパッケージでは、\opt{unicode}を有効にすることで非AJ1なフォントも出来る限りCIDを利用した
+
+\section{類似パッケージ}
+
+\pkg{otf}の一部の機能に類似した機能を有するパッケージがいくつか存在します。
+
+\begin{itemize}
+  \item \pkg{bxbase}
+  \item \pkg{circledtext}
+\end{itemize}
+
+
+
+
+\end{document}

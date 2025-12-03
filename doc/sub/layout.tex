@@ -1,0 +1,24 @@
+\RequirePackage{plautopatch}
+\documentclass[uplatex, dvipdfmx, paper=b5paper,
+    jafontsize = 9pt,
+    % jafontscale = 1,
+    line_length=35zw,
+    sidenote_length=13zw,
+    number_of_lines=35
+  ]{jlreq}
+\usepackage[pass]{geometry}
+\usepackage{multicol}
+\usepackage{lipsum}
+\usepackage{layout}
+\begin{document}
+
+\savegeometry{body}
+\newgeometry{textwidth=315pt,marginparwidth=0pt,lines=35}
+\layout\newpage\section{test}\thispagestyle{empty}
+\begin{multicols}{2}
+  \lipsum[1-3]
+\end{multicols}
+\loadgeometry{body}
+\layout\newpage\section{test}
+
+\end{document}

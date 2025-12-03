@@ -1,0 +1,48 @@
+\usepackage{subfiles}
+\usepackage{bxpapersize}
+\usepackage[pass]{geometry}
+\usepackage[T1]{fontenc}
+\usepackage[deluxe, multi, expert]{otf}
+\usepackage[noalphabet, haranoaji]{pxchfon}
+\setmarugothicfont{GenJyuuGothic-Regular.ttf}
+%
+\setkoreanminchofont{HaranoAjiMinchoK1-Regular.otf}
+\settchineseminchofont{HaranoAjiMinchoTW-Regular.otf}
+\setschineseminchofont{HaranoAjiMinchoCN-Regular.otf}
+%
+\setkoreanmediumgothicfont{HaranoAjiGothicK1-Regular.otf}
+\settchinesemediumgothicfont{HaranoAjiGothicTW-Regular.otf}
+\setschinesemediumgothicfont{HaranoAjiGothicCN-Regular.otf}
+%
+\setkoreanboldgothicfont{HaranoAjiGothicK1-Bold.otf}
+\settchineseboldgothicfont{HaranoAjiGothicTW-Bold.otf}
+\setschineseboldgothicfont{HaranoAjiGothicCN-Bold.otf}
+\usepackage{IBMpsJP}
+\usepackage{pxrubrica}
+\usepackage{pxharaproj}
+\usepackage{amsmath}
+\usepackage{plext}
+\usepackage[normalem]{ulem}
+\usepackage{tabto}
+\usepackage{marginfit}
+\usepackage{graphicx}
+
+\input{setup-base.tex}
+
+\ajCIDVarDef{葛}{1481}
+
+\newcommand{\hanja}{\UTFK{D55C}\UTFK{C790}}
+\newcommand{\munja}{\UTFK{BB38}\UTFK{C790}}
+\newcommand{\hankgo}{\UTFK{D55C}\UTFK{AD6D}\UTFK{C5B4}}
+
+\newcommand{\jiantizi}{\UTFC{7B80}\UTFC{4F53}\UTFC{5B57}}
+\newcommand{\fantizi}{\UTFT{7E41}\UTFT{9AD4}\UTFT{5B57}}
+
+\font\brsgfm=upbrsgnmlminrn-v at 9.62216 pt
+\AtBeginDvi{\special{pdf:mapline upbrsgnmlminrn-h UniJIS2004-UTF16-H HaranoAjiGothic-Medium.otf}}
+\font\MdGothic=upbrsgnmlminrn-h at 9.62216 pt
+
+\renewcommand{\thefootnote}{\nobreak{\ibmfamily\ajLabel\ajMarualph{footnote}}\eghostguarded{}}
+\renewcommand{\thepage}{\large\ibmfamily\ajLabel\ajKakkoKansuji{page}}
+
+\listfiles

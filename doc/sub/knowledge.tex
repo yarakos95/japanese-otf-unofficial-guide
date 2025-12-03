@@ -1,0 +1,97 @@
+\documentclass[../supplement]{subfiles}
+\begin{document}
+
+\section{Adobe-Japan1}\label{sec:AJ1}
+
+Adobe-Japan1（以下``AJ1''と称する）はAdobeが策定した日本語用文字コレクションで、各グリフにはCID(Character ID)が割り当てられ符号化されています。この文字コレクションを一意に識別するために、ROS; /Registry (Adobe) /Ordering (Japan1) /Supplement (6)によって``Adobe-Japan1-6''のように表現されます。
+
+ROSには日本語用のAdobe-Japan1の他にも、{\fantizi}用の``Adobe-CNS1''、{\jiantizi}用の``Adobe-GB1''、{\hankgo}用の``Adobe-Korea1''があります。
+
+ここで符号化されているグリフはUnicodeに集録されている文字の他にもUnicode外のさまざまな文字が集録されています。代表例としては{\ibmfamily\ajMaru{51}}が挙げられます。
+\sidenote{Unicodeでは丸囲み数字は{\ibmfamily\ajMaru{50}}までしかありません。また、ここで丸囲み51を表示できているのはIBM Plex Sans JPを使用しているためです。原ノ味フォントでは\ajMaru{51}のような豆腐になります。}
+
+AJ1は追補(supplement)が0から7まであります。代表的な追補は3から7で、それぞれ以下のようになっています。
+
+\begin{center}
+  \begin{booktabular}{ccp{25zw}}
+    \thead{追補} & \thead{フォント} & \thead{補足} \\
+    \midrule
+    3            & Std              & 標準的な日本語の文字が含まれる \\
+    4            & Pro              & 商用印刷を想定。JISの第三、第四水準の実用的な文字が含まれる \\
+    5            & Pr5              & JISの第三、第四水準の使用頻度が低い文字も含まれる \\
+    6            & Pr6              & JIS補助漢字などさらに使用頻度の低い文字を含む \\
+    7            & Pr6              & 「\ajLig{令和}」の合字1字（{縦書き用と合わせてグリフは2つ}）が追加される \\
+  \end{booktabular}
+\end{center}
+
+例えば、AJ1-3に準拠した和文フォントの場合、フォント名の末に``Std''が付けられています。
+
+特に、Adobe-Japan1に関する情報は以下のページを参照してください。
+\urltab[text]{\url{https://github.com/adobe-type-tools/Adobe-Japan1/blob/master/README-JP.md}}
+
+\end{document}
+
+
+
+
+\subsection{AJ1なフリーフォント}
+
+AJ1準拠のフォントはいくつかありますが、その内にフリーフォントはかなり数が限られます。
+
+\begin{itemize}
+  \item 原ノ味フォント / Harano Aji Fonts
+  \urltab[github]{\url{https://github.com/trueroad/HaranoAjiFonts}}
+  \item IBM Plex Sans JP
+  \urltab[github]{\url{https://github.com/IBM/plex}}
+\end{itemize}
+
+原ノ味フォントは源ノフォントを基にAJ1に再配置したフォントです。明朝体7ウェイト、ゴシック体7ウェイトがあります。丸ゴシック体はありません。ただし、AJ1に完全に準拠しておらず、記号等に関して抜けているグリフがあります。
+
+IBM Plex Sans JPはIBMが開発するフォントです。いわゆるゴシック体のみですが、8ウェイトあります。このフォントはAJ1-7に完全に準拠しています。本ドキュメントでは原ノ味フォントが出力できない記号用グリフを出力するために利用しています。
+
+\subsection{IBM Plex Sans JP}
+
+原ノ味フォントは{\TeXLive}に標準インストールされているので、IBM Plex Sans JPのインストール方法を確認します。
+
+IBM Plex Sans JPはGoogle FontsとGitHub Releaseの2つでダウンロードできます。ここでは\filePath{.otf}形式のフォントを取得したいので、GitHub Releaseからダウンロードします。このリポジトリでは、他の言語用フォントも展開されているため、以下のように検索すると良いでしょう。
+
+\urltab[github]{\url{https://github.com/IBM/plex/releases?q=ibm+plex-sans-jp&expanded=true}}
+
+ここでは、本ドキュメント時点で利用できる\texttt{@ibm/plex-sans-jp@2.0.0}から\filePath{ibm-plex-sans-jp.zip}をダウンロード・解凍します。
+
+\urltab[github]{\url{https://github.com/IBM/plex/releases/tag/%40ibm%2Fplex-sans-jp%402.0.0}}
+
+解凍したファイルから、以下のディレクトリ内にある8つのファイルを確認します。（バージョンは1.003です）
+
+\begin{directory}
+  ibm-plex-sans-jp/ibm-plex-sans-jp/fonts/complete/otf/hinted/
+\end{directory}
+
+これらのファイルを{\TeXLive}の以下のディレクトリに配置し、\terminalCMD{mktexlsr}を実行します。
+
+\begin{directory}
+  \textdollar TEXMFLOCAL/fonts/opentype/IBM\_Plex\_Sans\_JP/
+\end{directory}
+
+IBM Plex Sansには\UTFT{7E41}・\UTFC{7B80}・\UTFK{D55C}に対応するフォントもあります。これらもそれぞれのROSに対応しています。
+
+ただし、{\hankgo}のROSはAdobe-KRになっているため、利用できないことに注意してください。
+
+\subsection{独自に定義する}
+
+\cmd{ajMaru}のようなコマンドは案外簡単に実装出来ます。実装では\cmd{shift@CID}で起点になるCID値を指定するだけとなっているため、CID値が飛び飛びでなければ比較的簡単に定義できます。。
+
+例えば、以下のようなアラビア数字を出力するコマンドを作成してみました。
+
+\begin{texsource}
+\makeatletter
+\gdef\ajNum#1{\shift@CID{#1}{20749}}
+\gdef\ajPeriodNum#1{\shift@CID{#1}{20899}}
+\gdef\ajCommaNum#1{\shift@CID{#1}{20909}}
+\makeatother
+\end{texsource}
+% {\ibmfamily\ajCounterSample{ajNum}{1,2,3,100,140}}
+% {\ibmfamily\ajCounterSample{ajPeriodNum}{0,1,2,3,4,5,6,7,8,9}}
+% {\ibmfamily\ajCounterSample{ajCommaNum}{0,1,2,3,4,5,6,7,8,9}}
+
+\end{document}

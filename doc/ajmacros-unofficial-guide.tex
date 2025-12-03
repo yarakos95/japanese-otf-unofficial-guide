@@ -1,0 +1,2069 @@
+\RequirePackage{plautopatch}
+\documentclass[uplatex, dvipdfmx, paper=a4paper, line_length=45zw, head_space=7zw, foot_space=10zw]{jlreq}
+\input{setup-ajmacros.tex}
+\usepackage{ajmacros-cmd}
+\newcommand{\phrase}[1]{\texttt{#1}}
+\newcommand{\optast}{\eghostguarded{\texttt{\textasteriskcentered}}}
+\ExplSyntaxOn
+\NewDocumentCommand{ \ajTblCntrNum }{ m s m }
+{
+  \IfBooleanTF{ #2 }
+    { \texttt{\textbackslash #1*} }
+    { \texttt{\textbackslash #1} }
+  &
+  \IfBooleanTF{ #2 }
+    { \ibmfamily \ajCounterSample{#1}*{#3} }
+    { \ibmfamily \ajCounterSample{#1}{#3} }
+}
+\ExplSyntaxOff
+\ajCIDVarDef{高}{8705}
+\ajUTFVarDef{漢}{fa47}
+\ajCIDVarList{
+  吉=13706
+  教=8471
+  鴎=7646
+  崎=14290
+  第=13910角=13682
+  {ばく}=15192
+  {Saki2}=17009
+  {間2}=13693
+  {nabe1}=6929
+  {nabe2}=14235
+  {nabe3}=14236
+  {nabe4}=14237
+  {nabe5}=14238
+  {nabe6}=14239
+  {nabe7}=14240
+  {nabe8}=20234
+  }
+\ajUTFVarList{間=9592
+  黒=9ed1
+  黄=9EC3
+  内=5167
+  ♪=266c
+  }
+\title{\pkg{ajmacros}非公式マニュアル}
+\author{やらかしの貴公子}
+\date{\docDate}
+\begin{document}
+\savegeometry{body}
+% \newgeometry{textwidth=45zw, textheight=600pt, marginparwidth=0pt}
+
+\thispagestyle{fancy}
+\fancyhead{}
+\fancyfoot{\docLicense}
+\pagestyle{cover}
+
+\maketitle
+
+\begin{abstract}
+  これはユーザー向けの\pkg{ajmacros}の非公式マニュアルです。
+
+  \vspace{0.7zw}
+  \noindent{\centering
+  \textgt{\small 対象バージョン}：%
+  2025-07-24 TeX JP org, v1.7b8 psitau, u0.32 ttk%
+  （コミュニティ版）}
+\end{abstract}
+
+{
+\begin{multicols*}{2}
+  \small
+  \tableofcontents
+\end{multicols*}
+}
+
+\clearpage
+\loadgeometry{body}
+\setcounter{page}{1}
+\pagestyle{plain}
+
+\section{\texorpdfstring{\pkg{ajmacros}}{ajmacrosパッケージ}とは}\addtocontents{section}{ajmacrosパッケージとは}
+
+\pkg{ajmacros}は{\AdobeJapan}で規定されている約2.3万の文字を簡便に扱うことが出来るようになるパッケージです。
+
+{\AdobeJapan}には仮名、漢字の他にもさまざまな文字・記号が収録されています。これらの文字・記号は{\ShiftJIS}では入力できない文字や{{\Unicode}}による入力であっても入力が難しい文字、{{\Unicode}}にも収録されていない文字が含まれています。
+
+これらの文字に関して、\pkg{otf}の\cmd{CID}から入力することは可能ですが、約2.3万グリフの中から目的の文字を探し出したり数字を覚えているのは非常に難儀です。\pkg{ajmacros}はこのような煩雑さから解消します。
+
+% \pkg{ajmacros}を読むには、文字コードがISO-2022-JPであることに注意してください。
+
+\vfil
+\subsection{パッケージ読み込み}
+
+プリアンブルで以下のようにすることでパッケージを読み込みます。パッケージオプションはありません。
+
+\begin{texsource}
+\usepackage{ajmacros}
+\end{texsource}
+
+ただし、\pkg{ajmacros}が読み込まれるとき\pkg{otf}が読み込まれるため、\pkg{otf}だけの読み込みに終始した方が分かりやすいと思います。
+
+\vfil
+\subsection{注意}
+
+\pkg{ajmacros}ではさまざまな記号を出力するためのコマンドがありますが、引数が必要なコマンドに与える引数が間違っている場合であってもエラーや警告が発行されません。
+ただ何も無いものが出力されるだけです。
+
+例えば、\cmd{ajLig\{\jpincmd{◇ほか}\}}（{\ibmfamily\ajLig{◇ほか}}）はありますが、\cmd{ajLig\{\jpincmd{ほか}\}}（{\ibmfamily\scalebox{0.5}{\vbox{\hbox to 2zw{ほ　}\vspace{-1zw}\hbox to 2zw{　か}}}}に相当するもの）はありません。
+
+\begin{demosource}
+  \cmd{ajLig}\{\jpincmd{◇ほか}\}はあるが、
+  \cmd{ajLig}\{\jpincmd{ほか}\}はない。
+  \tcblower
+  {\ibmfamily\ajLig{◇ほか}}はあるが、
+  \ajLig{ほか}はない。
+\end{demosource}
+
+そのため、意図せず間違った引数を与えていた場合に、その間違いに気づかない可能性があることに注意が必要です。
+
+\vfil
+\subsection{本ドキュメントで使用するフォント}
+
+本ドキュメントの本文に利用しているフォントは原ノ味フォントです。しかし、グリフを表示するためには足りないグリフが多いため、多くにIBM Plex Sans JPを利用しています。
+
+特にどちらのフォントを使用しているかを明記していませんが、明朝であれば原ノ味、ゴシックであればIBM Plex Sans JPであると思ってください。
+
+\newpage
+
+\section{漢字}
+
+4つの漢字のコマンドが定義されています。
+
+\begin{multicols}{2}
+  \begin{itemize}
+    \item \cmd{ajHashigoTaka}
+      \tabto{10zw} \ajHashigoTaka (\UCN{9AD9})
+    \item \cmd{ajTsuchiYoshi}
+      \tabto{10zw} \ajTsuchiYoshi (\UCN{20BB7})
+    \item \cmd{ajTatsuSaki}
+      \tabto{10zw} \ajTatsuSaki (\UCN{FA11})
+    \item \cmd{ajMayuHama}
+      \tabto{10zw} \ajMayuHama (\UCN{6FF5})
+  \end{itemize}
+\end{multicols}
+
+これらの文字は\cmd{CID}を利用して定義されています。そのため、同じように独自に定義してみても良いでしょう。
+
+\subsection{文字の簡易入力定義：\texorpdfstring{\cmd{ajVar}}{\textbackslash ajVar}}
+
+{\ShiftJIS}で直接入力できなかったりして、任意の文字をその都度{\Unicode}・CID値から指定するのは面倒です。
+そこで、これらを\cmd{ajVar\{\textlrangle{文字名}\}}の形で入力できると簡単です。
+
+これを定義するコマンドがあります。これらのコマンドはプリアンブルで使用します。
+
+\begin{itemize}
+  \item 1文字定義：
+  \begin{itemize}
+    \item \cmd{ajUTFVarDef\{\textlrangle{文字名}\}\{\textlrangle{{\Unicode}値}\}}
+    \item \cmd{ajCIDVarDef\{\textlrangle{文字名}\}\{\textlrangle{CID値}\}}
+  \end{itemize}
+  \item リスト形式で複数定義：
+  \begin{itemize}
+    \item \cmd{ajUTFVarList\{\textlrangle{文字名1}=\textlrangle{{\Unicode}値1} \{\textlrangle{文字名2}\}=\textlrangle{{\Unicode}値2}\dots\}}
+      \item \cmd{ajCIDVarList\{\textlrangle{文字名1}=\textlrangle{CID値1} \{\textlrangle{文字名2}\}=\textlrangle{CID値2}\dots\}}
+  \end{itemize}
+\end{itemize}
+
+例えば、プリアンブルで以下のように定義します。\eghostguarded{\textlrangle{文字名}}が2文字以上の場合は波括弧でくくる必要があります。
+また、\cmd{aj(UTF|CID)VarList}はリスト形式を採りますが、key-valueリストのように区切りにカンマ(\texttt{,})を必要としないことに注意してください。
+
+\begin{texsource}
+\ajCIDVarDef{鴎}{7646}
+\ajUTFVarDef{漢}{fa47}
+\ajCIDVarList{吉=13706崎=14290
+  {ばく}=15192 {Saki2}=17009
+  }
+\ajUTFVarList{間=9592
+  黒=9ed1黄=9EC3
+  ♪=266c}
+\end{texsource}
+
+上記プリアンブルでは10の文字について定義しており、ドキュメント内ではこれをもとに\cmd{ajVar}を利用して文字を指定します。
+
+\begin{demosource}
+  \cmd{ajVar\{鴎\}}、\cmd{ajVar\{漢\}}。\\
+  \cmd{ajVar\{吉\}}、\cmd{ajVar\{崎\}}、\cmd{ajVar\{ばく\}}、\cmd{ajVar\{Saki2\}}。\\
+  \cmd{ajVar\{間\}}、\cmd{ajVar\{黒\}}、\cmd{ajVar\{黄\}}、\cmd{ajVar\{♪\}}。
+  \tcblower
+  \ajVar{鴎}、
+  \ajVar{漢}。\\
+  \ajVar{吉}、
+  \ajVar{崎}、
+  \ajVar{ばく}、
+  \ajVar{Saki2}。\\
+  \ajVar{間}、
+  \ajVar{黒}、
+  \ajVar{黄}、
+  \ajVar{♪}。
+\end{demosource}
+
+基本的に{\AdobeJapan}が包括するすべての文字に関して構成できるため、漢字に限らないことにも留意してください。
+
+\section{半角仮名：\texorpdfstring{\cmd{aj{\inhibitkanjiskip}半角}}{\textbackslash aj半角}}
+
+\cmd{aj\jpincmd*{半角}}はひらがなやカタカナを半角幅にします。濁点、半濁点、小書きの仮名も範疇に入ります。一方で、漢字は半角幅にはなりません。
+
+以下の例を見てください。
+
+\begin{demosource}[0.3]
+  {\textbackslash}aj\jpincmd*{半角}\{\jpincmd{沖縄}\}%
+  で食べた%
+  {\textbackslash}aj\jpincmd*{半角}\{\jpincmd{おいしい}\}%
+  {\textbackslash}aj\jpincmd*{半角}\{\jpincmd{パイナップル}\}%
+  と\\%
+  {\textbackslash}aj\jpincmd*{半角}\{\jpincmd{すっぱい}\}%
+  {\textbackslash}aj\jpincmd*{半角}\{\jpincmd{シークヮーサー}\}%
+  の%
+  {\textbackslash}aj\jpincmd*{半角}\{\jpincmd{ジュース}\}%
+  \tcblower
+  {\ibmfamily \aj半角{沖縄}で食べた\aj半角{おいしい}\aj半角{パイナップル}と%
+  \aj半角{すっぱい}\aj半角{シークヮーサー}の\aj半角{ジュース}}
+\end{demosource}
+
+これらの半角幅になっている文字は、単に幅を半角幅に変形しているのではなく、半角幅のグリフを利用していることに留意してください。
+
+\section{数値表記変換コマンド}
+
+数値表記変換コマンドは\cmd{aj\textlrangle{囲み種}\textlrangle{文字種}\{\textlrangle{値}\}}の形式で囲み種と文字種を指定します。
+代表的な囲み種と文字種はそれぞれ以下のようになっています。
+
+\medskip
+\hfil
+\begin{minipage}[t]{0.45\linewidth}
+  \textlrangle{囲み種}：\vspace{-0.8zw}
+  \begin{itemize}
+    \item 丸囲み：{\ibmfamily \ajMaru{1}}\tabto{7zw}\phrase{Maru}
+    \item 四角：{\ibmfamily \ajKaku{1}}\tabto{7zw}\phrase{Kaku}
+    \item 丸四角：{\ibmfamily \ajMaruKaku{1}}\tabto{7zw}\phrase{MaruKaku}
+    \item 括弧囲み：{\ibmfamily \ajKakko{1}}\tabto{7zw}\phrase{Kakko}
+    \item 白抜き
+      \begin{itemize}
+        \item 白抜き丸囲み：{\ibmfamily \ajKuroMaru{1}}\tabto{9zw}\phrase{KuroMaru}
+        \item 白抜き四角：{\ibmfamily \ajKuroKaku{1}}\tabto{9zw}\phrase{KuroKaku}
+        \item 白抜き丸四角：{\ibmfamily \ajKuroMaruKaku{1}}\tabto{9zw}\phrase{KuroMaruKaku}
+      \end{itemize}
+  \end{itemize}
+\end{minipage}
+\hfil
+\begin{minipage}[t]{0.3\linewidth}
+  \textlrangle{文字種}：\vspace{-0.8zw}
+  \begin{itemize}
+    \item アラビア数字 \tabto{9zw}-
+    \item ラテン文字小文字 \tabto{9zw}\phrase{alph}
+    \item ラテン文字大文字 \tabto{9zw}\phrase{Alph}
+    \item ひらがな \tabto{9zw}\phrase{Hira}
+    \item カタカナ \tabto{9zw}\phrase{Kata}
+    \item 曜日 \tabto{9zw}\phrase{Yobi}
+  \end{itemize}
+\end{minipage}
+\hfil
+\bigskip
+
+以上から、42 (7\textsubscript{\textlrangle{囲み種}}\texttimes 6\textsubscript{\textlrangle{文字種}})のコマンドが利用できます。例えば丸囲みアラビア数字は\cmd{ajMaru}、四角囲みラテン文字は\cmd{ajKakualph}と表現されます。また、他のコマンドに関しても以下のように組み合わせることで表現できます。
+
+\begin{demosource}
+  \cmd{ajMaru\{57\}}、
+  \cmd{ajKakualph\{7\}}、
+  \cmd{ajMaruKakuAlph\{17\}}、\\
+  \cmd{ajKakkoHira\{26\}}、
+  \cmd{ajKuroMaruKata\{42\}}、\\
+  \cmd{ajKuroKakuYobi\{1\}}、
+  \cmd{ajKuroMaruKaku*\{3\}}
+  \tcblower
+  \ibmfamily
+  \ajMaru{57}、
+  \ajKakualph{7}、
+  \ajMaruKakuAlph{17}、
+  \ajKakkoHira{26}、
+  \ajKuroMaruKata{42}、
+  \ajKuroKakuYobi{1}、
+  \ajKuroMaruKaku*{3}
+\end{demosource}
+
+これらの数値表記変換コマンドは、CID値が連続することを利用して、下限となるグリフのCID値からのズレを計算することでグリフを指定します。
+このとき、指定するズレの量には上限がありません。
+そのため、最大値を超えるような数字が指定された場合、まったく意図しない文字が出力されるようになります。
+\warichu{ただし、どのグリフもCID値が連続しているわけではないため、適宜、条件分岐によって値が飛ぶようになっています。}
+
+一方で、類似グリフのCID値が連続するような場合では少し便利です。例えば、丸囲みラテン文字は小文字から大文字が連続したCID値のため、\cmd{ajMarualph}で26を超えたときでも丸囲みラテン文字大文字になります。
+
+\begin{demosource}
+  {\textbackslash}ajMarualph\{24\},
+  {\textbackslash}ajMarualph\{25\},
+  {\textbackslash}ajMarualph\{26\},\\
+  {\textbackslash}ajMarualph\{27\},
+  {\textbackslash}ajMarualph\{28\},
+  {\textbackslash}ajMarualph\{29\}.
+  \tcblower
+  \ibmfamily
+  \ajMarualph{24},
+  \ajMarualph{25},
+  \ajMarualph{26},
+  \ajMarualph{27},
+  \ajMarualph{28},
+  \ajMarualph{29}.
+\end{demosource}
+
+\newpage
+\subsection{アラビア数字}
+
+それぞれに{\optast}付きのコマンド変種があります。これらは1桁のアラビア数字の先頭に0が加えられたグリフになっています。
+
+\begin{center}
+  \begin{booktabular}{p{12zw}lcc}
+    \thead{コマンド}             & \thead{例}           & \thead{最小値} & \thead{最大値}    \\
+    \midrule
+    \ajTblCntrNum{ajMaru}          {0,1,2-50,51,52-99,100} & 0              & 100            \\
+    \ajTblCntrNum{ajMaru}*         {0,1,2-50,51,52-99,100} & 0              & 100            \\
+    \ajTblCntrNum{ajKuroMaru}      {0,1,2-50,51,52-99,100} & 0              & 100            \\
+    \ajTblCntrNum{ajKuroMaru}*     {0,1,2-50,51,52-99,100} & 0              & 100            \\
+    \ajTblCntrNum{ajKaku}          {0,1,2-50,51,52-99,100} & 0              & 100            \\
+    \ajTblCntrNum{ajKaku}*         {0,1,2-50,51,52-99,100} & 0              & 100            \\
+    \ajTblCntrNum{ajKuroKaku}      {0,1,2-50,51,52-99,100} & 0              & 100            \\
+    \ajTblCntrNum{ajKuroKaku}*     {0,1,2-50,51,52-99,100} & 0              & 100            \\
+    \ajTblCntrNum{ajMaruKaku}      {0,1,2-50,51,52-99,100} & 0              & 100            \\
+    \ajTblCntrNum{ajMaruKaku}*     {0,1,2-50,51,52-99,100} & 0              & 100            \\
+    \ajTblCntrNum{ajKuroMaruKaku}  {0,1,2-50,51,52-99,100} & 0              & 100            \\
+    \ajTblCntrNum{ajKuroMaruKaku}* {0,1,2-50,51,52-99,100} & 0              & 100            \\
+    \ajTblCntrNum{ajKakko}         {0,1,2-50,51,52-99,100} & 0              & 100            \\
+    \ajTblCntrNum{ajKakko}*        {0,1,2-50,51,52-99,100} & 0              & 100            \\
+  \end{booktabular}
+\end{center}
+
+\vfil
+\subsection{ラテン文字}
+
+\begin{center}
+  \begin{booktabular}{p{12zw}lcc}
+    \thead{コマンド}             & \thead{例}           & \thead{最小値} & \thead{最大値} \\
+    \midrule
+    \ajTblCntrNum{ajMarualph}         {1,2,3-15,16,17-25,26} & 1          & 26            \\
+    \ajTblCntrNum{ajMaruAlph}         {1,2,3-15,16,17-25,26} & 1          & 26            \\
+    \ajTblCntrNum{ajKuroMarualph}     {1,2,3-15,16,17-25,26} & 1          & 26            \\
+    \ajTblCntrNum{ajKuroMaruAlph}     {1,2,3-15,16,17-25,26} & 1          & 26            \\
+    \ajTblCntrNum{ajKakualph}         {1,2,3-15,16,17-25,26} & 1          & 26            \\
+    \ajTblCntrNum{ajKakuAlph}         {1,2,3-15,16,17-25,26} & 1          & 26            \\
+    \ajTblCntrNum{ajKuroKakualph}     {1,2,3-15,16,17-25,26} & 1          & 26            \\
+    \ajTblCntrNum{ajKuroKakuAlph}     {1,2,3-15,16,17-25,26} & 1          & 26            \\
+    \ajTblCntrNum{ajMaruKakualph}     {1,2,3-15,16,17-25,26} & 1          & 26            \\
+    \ajTblCntrNum{ajMaruKakuAlph}     {1,2,3-15,16,17-25,26} & 1          & 26            \\
+    \ajTblCntrNum{ajKuroMaruKakualph} {1,2,3-15,16,17-25,26} & 1          & 26            \\
+    \ajTblCntrNum{ajKuroMaruKakuAlph} {1,2,3-15,16,17-25,26} & 1          & 26            \\
+    \ajTblCntrNum{ajKakkoalph}        {1,2,3-15,16,17-25,26} & 1          & 26            \\
+    \ajTblCntrNum{ajKakkoAlph}        {1,2,3-15,16,17-25,26} & 1          & 26            \\
+  \end{booktabular}
+\end{center}
+
+\newpage
+\subsection{ひらがな・カタカナ}
+
+\begin{center}
+  \begin{booktabular}{p{12zw}lcc}
+    \thead{コマンド}             & \thead{例}           & \thead{最小値} & \thead{最大値} \\
+    \midrule
+    \ajTblCntrNum{ajMaruHira}         {1,2,3-25,26,27-47,48} & 1          & 48            \\
+    \ajTblCntrNum{ajMaruKata}         {1,2,3-25,26,27-47,48} & 1          & 48            \\
+    \ajTblCntrNum{ajKuroMaruHira}     {1,2,3-25,26,27-47,48} & 1          & 48            \\
+    \ajTblCntrNum{ajKuroMaruKata}     {1,2,3-25,26,27-47,48} & 1          & 48            \\
+    \ajTblCntrNum{ajKakuHira}         {1,2,3-25,26,27-47,48} & 1          & 48            \\
+    \ajTblCntrNum{ajKakuKata}         {1,2,3-25,26,27-47,48} & 1          & 48            \\
+    \ajTblCntrNum{ajKuroKakuHira}     {1,2,3-25,26,27-47,48} & 1          & 48            \\
+    \ajTblCntrNum{ajKuroKakuKata}     {1,2,3-25,26,27-47,48} & 1          & 48            \\
+    \ajTblCntrNum{ajMaruKakuHira}     {1,2,3-25,26,27-47,48} & 1          & 48            \\
+    \ajTblCntrNum{ajMaruKakuKata}     {1,2,3-25,26,27-47,48} & 1          & 48            \\
+    \ajTblCntrNum{ajKuroMaruKakuHira} {1,2,3-25,26,27-47,48} & 1          & 48            \\
+    \ajTblCntrNum{ajKuroMaruKakuKata} {1,2,3-25,26,27-47,48} & 1          & 48            \\
+    \ajTblCntrNum{ajKakkoHira}        {1,2,3-25,26,27-47,48} & 1          & 48            \\
+    \ajTblCntrNum{ajKakkoKata}        {1,2,3-25,26,27-47,48} & 1          & 48            \\
+  \end{booktabular}
+\end{center}
+
+濁点、半濁点、小書きの囲み文字はありません。以下に通しのグリフを掲載します。
+
+\begin{description}[rightmargin=3zw]
+  \item[ひらがな：] {\ibmfamily \ajMaruHira{1}, \ajMaruHira{2}, \ajMaruHira{3}, \ajMaruHira{4}, \ajMaruHira{5}, \ajMaruHira{6}, \ajMaruHira{7}, \ajMaruHira{8}, \ajMaruHira{9}, \ajMaruHira{10}, \ajMaruHira{11}, \ajMaruHira{12}, \ajMaruHira{13}, \ajMaruHira{14}, \ajMaruHira{15}, \ajMaruHira{16}, \ajMaruHira{17}, \ajMaruHira{18}, \ajMaruHira{19}, \ajMaruHira{20}, \ajMaruHira{21}, \ajMaruHira{22}, \ajMaruHira{23}, \ajMaruHira{24}, \ajMaruHira{25}, \ajMaruHira{26}, \ajMaruHira{27}, \ajMaruHira{28}, \ajMaruHira{29}, \ajMaruHira{30}, \ajMaruHira{31}, \ajMaruHira{32}, \ajMaruHira{33}, \ajMaruHira{34}, \ajMaruHira{35}, \ajMaruHira{36}, \ajMaruHira{37}, \ajMaruHira{38}, \ajMaruHira{39}, \ajMaruHira{40}, \ajMaruHira{41}, \ajMaruHira{42}, \ajMaruHira{43}, \ajMaruHira{44}, \ajMaruHira{45}, \ajMaruHira{46}, \ajMaruHira{47}, \ajMaruHira{48}.}
+  \item[カタカナ：] {\ibmfamily \ajMaruKata{1}, \ajMaruKata{2}, \ajMaruKata{3}, \ajMaruKata{4}, \ajMaruKata{5}, \ajMaruKata{6}, \ajMaruKata{7}, \ajMaruKata{8}, \ajMaruKata{9}, \ajMaruKata{10}, \ajMaruKata{11}, \ajMaruKata{12}, \ajMaruKata{13}, \ajMaruKata{14}, \ajMaruKata{15}, \ajMaruKata{16}, \ajMaruKata{17}, \ajMaruKata{18}, \ajMaruKata{19}, \ajMaruKata{20}, \ajMaruKata{21}, \ajMaruKata{22}, \ajMaruKata{23}, \ajMaruKata{24}, \ajMaruKata{25}, \ajMaruKata{26}, \ajMaruKata{27}, \ajMaruKata{28}, \ajMaruKata{29}, \ajMaruKata{30}, \ajMaruKata{31}, \ajMaruKata{32}, \ajMaruKata{33}, \ajMaruKata{34}, \ajMaruKata{35}, \ajMaruKata{36}, \ajMaruKata{37}, \ajMaruKata{38}, \ajMaruKata{39}, \ajMaruKata{40}, \ajMaruKata{41}, \ajMaruKata{42}, \ajMaruKata{43}, \ajMaruKata{44}, \ajMaruKata{45}, \ajMaruKata{46}, \ajMaruKata{47}, \ajMaruKata{48}.}
+\end{description}
+
+\vfil
+\subsection{曜日}
+
+\begin{center}
+  \begin{booktabular}{p{12zw}lccc}
+    \thead{コマンド}             & \thead{例}         & \thead{最小値} & \thead{最大値} \\
+    \midrule
+    \ajTblCntrNum{ajMaruYobi}         {1,2,3,4,5,6,7} & 1          & 7             \\
+    \ajTblCntrNum{ajKuroMaruYobi}     {1,2,3,4,5,6,7} & 1          & 7             \\
+    \ajTblCntrNum{ajKakuYobi}         {1,2,3,4,5,6,7} & 1          & 7             \\
+    \ajTblCntrNum{ajKuroKakuYobi}     {1,2,3,4,5,6,7} & 1          & 7             \\
+    \ajTblCntrNum{ajMaruKakuYobi}     {1,2,3,4,5,6,7} & 1          & 7             \\
+    \ajTblCntrNum{ajKuroMaruKakuYobi} {1,2,3,4,5,6,7} & 1          & 7             \\
+    \ajTblCntrNum{ajKakkoYobi}        {1,2,3,4,5,6,7} & 1          & 7             \\
+  \end{booktabular}
+\end{center}
+
+\newpage
+\subsection{その他}
+
+\cmd{ajApostrophe}と\cmd{ajYear}は同じです。
+\cmd{ajRoman*}は4のみグリフが異なります。
+
+\cmd{ajSquareMark}には\cmd{ajSquareMark+}という変種もあります。
+これは、偶数を\cmd{ajSquareMark}に、奇数を\cmd{ajSquareMark*}にします。
+\cmd{ajSquareMark}とその変種の{\optast}付きが出力する記号に関して、6番目の記号が対応していないことに注意してください。
+
+\begin{center}
+  \begin{booktabular}{p{11zw}lcc}
+    \thead{コマンド}             & \thead{例}           & \thead{最小値} & \thead{最大値} \\
+    \midrule
+    \ajTblCntrNum{ajNijuMaru}      {1,2,3,4,5,6,7,8,9,10}      & 1   & 10  \\
+    \ajTblCntrNum{ajPeriod}        {1,2,3,4,5,6,7,8,9,10,11}   & 1   & 11  \\
+    \ajTblCntrNum{ajSlanted}       {0,1,2-29,30,31-58,59}      & 0   & 59  \\
+    \ajTblCntrNum{ajSlanted}*      {0,1,2-29,30,31-58,59}      & 0   & 59  \\
+    \ajTblCntrNum{ajCross}         {1,2,3,4,5,6,7,8,9}         & 1   & 9   \\
+    \ajTblCntrNum{ajApostrophe}    {0,1,2-50,51,52-98,99}      & 0   & 99  \\
+    \ajTblCntrNum{ajYear}          {0,1,2-50,51,52-98,99}      & 0   & 99  \\
+    \ajTblCntrNum{ajHasenKakuAlph} {1,2,3,4,5,6}               & 1   & 6   \\
+    \ajTblCntrNum{ajMaruKansuji}   {1,2,3,4,5,6,7,8,9,10}      & 1   & 10  \\
+    \ajTblCntrNum{ajKakkoKansuji}  {1,2,3,4,5,6-18,19,20}      & 1   & 20  \\
+    \ajTblCntrNum{ajroman}         {1,2,3,4,5-12,13,14,15}     & 1   & 15  \\
+    \ajTblCntrNum{ajRoman}         {1,2,3,4,5-12,13,14,15}     & 1   & 15  \\
+    \ajTblCntrNum{ajRoman}*        {1,2,3,4,5-12,13,14,15}     & 1   & 15  \\
+    % \ajTblCntrNum{ajKakkoroman}    {1,2,3,4,5-12,13,14,15}     & 1   & 15  \\
+    \cmd{ajKakkoroman}            & {\ibmfamily \CID{9984}\,\CID{9985}\,\CID{9986}\,\CID{9987}\,\CID{9988}\dots\CID{10000}\,\CID{10001}\,\CID{10002}\,\CID{10003}}
+                                                              & 1   & 15  \\
+    % \ajTblCntrNum{ajKakkoRoman}    {1,2,3,4,5-12,13,14,15}     & 1   & 15  \\
+    \cmd{ajKakkoRoman}            & {\ibmfamily \CID{9974}\,\CID{9975}\,\CID{9976}\,\CID{9977}\,\CID{9978}\dots\CID{9994}\,\CID{9995}\,\CID{9996}\,\CID{9997}\,\CID{9998}}
+                                                              & 1   & 15  \\
+    \ajTblCntrNum{ajRecycle}       {0,1,2,3,4,5,6,7,8,9,10,11} & 0   & 11  \\
+    \ajTblCntrNum{ajSquareMark}    {1,2,3,4,5,6,7,8,9,10}      & 1   & 10  \\
+    \ajTblCntrNum{ajSquareMark}*   {1,2,3,4,5,6,7,8,9}         & 1   & 9   \\
+    \ajTblCntrNum{ajHishi}         {1,2,3,4}                   & 1   & 4   \\
+  \end{booktabular}
+\end{center}
+
+IBM Plex Sans JPの不備のため、本来\cmd{ajRoman*}の{\ibmfamily\CID{9883}}に丸括弧はないはずですが、なぜか囲まれたグリフになっています。
+加えて、\cmd{ajKakkoroman}および\cmd{ajKakkoRoman}は、グリフ順序が間違っていました。そのため、適切な順序になるように調整しています。
+
+\section{詰め数字：\texorpdfstring{\cmd{ajTsumesuji}}{\textbackslash ajTsumesuji}}
+
+\cmd{ajTsumesuji} (\cmd{ajTumesuji})によって、詰め数字を表現できます。第1引数の値によって幅が変わります。（字幅を変形で詰めているのではなく、対応する幅のグリフがあります）
+
+\begin{itemize}
+  \item \cmd{ajTsumesuji\{1\}\{\textlrangle{digits}\}}：全角幅 \qquad {\small\gtfamily 例}： {\ibmfamily \ajTsumesuji{1}{0123456789}}
+  \item \cmd{ajTsumesuji\{2\}\{\textlrangle{digits}\}}：二分幅 \qquad {\small\gtfamily 例}： {\ibmfamily \ajTsumesuji{2}{0123456789}}
+  \item \cmd{ajTsumesuji\{3\}\{\textlrangle{digits}\}}：三分幅 \qquad {\small\gtfamily 例}： {\ibmfamily \ajTsumesuji{3}{0123456789}}
+  \item \cmd{ajTsumesuji\{4\}\{\textlrangle{digits}\}}：四分幅 \qquad {\small\gtfamily 例}： {\ibmfamily \ajTsumesuji{4}{0123456789}}
+\end{itemize}
+
+加えて、\cmd{ajTsumesuji*}は文字数に応じて自動的に幅を変更します。
+ただし、この\cmd{ajTsumesuji*\{\textlrangle{digits}\}}は5桁を超える数字は受け付けません。
+
+また、\cmd{ajTsumesuji(*)}の第2引数は数字のみを受け付けるため、カンマ(\texttt{,})やピリオド(\texttt{.})を含めることは出来ません。
+
+これらのコマンドは、特に縦組中に用いられる連数字（縦中横）を表現する際に利用できます。\pkg{plext}の\cmd{rensuji}や\cls{jlreq}の\cmd{tatechuyoko}を利用して、以下のようにします。
+
+\begin{demosource}*[0.15]
+  平成は{\textbackslash}rensuji\{\textbackslash{ajTsumesuji}\{4\}\{2019\}\}年
+  {\textbackslash}rensuji\{\textbackslash{ajTsumesuji}\{1\}\{4\}\}月\%\\
+  {\textbackslash}rensuji\{\textbackslash{ajTsumesuji}\{2\}\{30\}\}日
+  に終わりを告げ、その期間は\%\\
+  {\textbackslash}rensuji\{\textbackslash{ajTsumesuji}\{4\}\{11070\}\}日
+  （{\textbackslash}rensuji\{\textbackslash{ajTsumesuji}*\{30\}\}年と\%\\
+  {\textbackslash}rensuji\{\textbackslash{ajTsumesuji}*\{113\}\}日）となりました。
+  \tcblower
+  \begin{minipage}<t>[t][4zw]{15zw}
+    平成は\rensuji{\ibmfamily\ajTsumesuji{4}{2019}}年\rensuji{\ibmfamily\ajTsumesuji{1}{4}}月\rensuji{\ibmfamily\ajTsumesuji{2}{30}}日に終わりを告げ、その期間は
+    \rensuji{\ibmfamily\ajTsumesuji{4}{11070}}日（\rensuji{\ibmfamily\ajTsumesuji*{30}}年と\rensuji{\ibmfamily\ajTsumesuji*{113}}日）となりました。
+  \end{minipage}
+\end{demosource}
+
+\section{数値表記変換コマンドや詰め数字をカウンタに利用する}
+
+数値表記変換コマンドや詰め数字をカウンタに利用することが出来ます。これらのコマンドをカウンタに利用する場合、以下の2点について注意が必要です。
+
+\begin{itemize}
+  \item fragileなコマンドなため、\cmd{section}等の中では\cmd{protect}を前置する
+  \item カウンタを引数にする場合は\cmd{ajLabel}を前置する
+\end{itemize}
+
+数値表記変換コマンドはfragileなコマンドのため、\cmd{section}内であっても\cmd{protect}を利用する必要があります。
+
+\begin{texsource}
+\section{\protect\ajMaru{5}}
+\end{texsource}
+
+また、\pkg{enumitem}を使用する場合も同様に\cmd{protect}を使用します。
+
+\begin{texsource}
+\begin{enumerate}[label=\protect\ajMaru{\arabic{*}}] ... \end{enumerate}
+\end{texsource}
+
+数値表記変換コマンドや詰め数字は引数に数値のみを採るため、カウンタを引数にする場合は\cmd{ajLabel}を前置します。これによって、\cmd{arabic\{\textlrangle{counter}\}}等と同じようにカウンタを引数に取ることが出来ます。
+
+例えば、ページ番号を丸囲み数字にする、番号付きリストを詰め数字にするには以下のようにします。
+
+\begin{texsource}
+\renewcommand{\thepage}{\ajLabel\ajMaru{page}}
+\renewcommand{\theenumi}{\ajLabel\ajTumesuji*{enumi}}
+\end{texsource}
+
+ただし、\cmd{ajLabel}が\pkg{hyperref}の更新によってはエラーが生じることがあります。
+
+\begin{itemize}
+  \item k16's note: \LaTeX で連番リストに丸数字（\cmd{ajMaru}）を使えたはずだけどhyperrefで困る話
+  \urltab{\url{https://note.golden-lucky.net/2016/02/latexajmaruhyperref.html}}
+\end{itemize}
+
+\section{詰め括弧、年齢}
+
+詰め数字を括弧で囲った詰め括弧と新聞等で見られる丸括弧に数字と「つ」や「才」等を与えた年齢の表現をします。
+
+\begin{itemize}
+  %%
+  \item \cmd{ajTsumekakko\{\textlrangle{digits}\}}
+  \begin{itemize}
+    \item {\small\sffamily\gtfamily 横組：}
+      \begin{demosource}[0.25]
+        {\textbackslash}ajTsumekakko\{20\}%
+        {\textbackslash}ajTsumekakko\{123\}%
+        {\textbackslash}ajTsumekakko\{1998\}%
+        \tcblower
+        \ibmfamily
+        \ajTsumekakko{20}
+        \ajTsumekakko{123}
+        \ajTsumekakko{1998}
+      \end{demosource}
+    \item {\small\sffamily\gtfamily 縦組：}
+      \begin{demosource}[0.25]
+        {\textbackslash}pbox<t>\{{\textbackslash}ajTsumekakko\{20\}\}\\
+        {\textbackslash}pbox<t>\{{\textbackslash}ajTsumekakko\{123\}\}\\
+        {\textbackslash}pbox<t>\{{\textbackslash}ajTsumekakko\{1998\}\}
+        \tcblower
+        \ibmfamily
+        \pbox<t>{\ajTsumekakko{20}}
+        \pbox<t>{\ajTsumekakko{123}}
+        \pbox<t>{\ajTsumekakko{1998}}
+      \end{demosource}
+  \end{itemize}
+  %%
+  \item \cmd{ajNenrei\{\textlrangle{1, 2}\}\{\textlrangle{digits}\}}
+    \begin{itemize}
+      \item {\small\sffamily\gtfamily 横組：}
+        \begin{demosource}[0.25]
+          {\textbackslash}ajNenrei\{1\}\{3\}%
+          {\textbackslash}ajNenrei\{2\}\{5\}\\%
+          {\textbackslash}ajNenrei\{1\}\{13\}%
+          {\textbackslash}ajNenrei\{2\}\{25\}%
+          \tcblower
+          \ibmfamily
+          \ajNenrei{1}{3}%
+          \ajNenrei{2}{5}%
+          \ajNenrei{1}{13}%
+          \ajNenrei{2}{25}%
+        \end{demosource}
+      \item {\small\sffamily\gtfamily 縦組：}
+        \begin{demosource}[0.25]
+          {\textbackslash}pbox<t>\{{\textbackslash}ajNenrei\{1\}\{3\}\}%
+          {\textbackslash}pbox<t>\{{\textbackslash}ajNenrei\{1\}\{13\}\}、\\%
+          {\textbackslash}pbox<t>\{{\textbackslash}ajNenrei\{2\}\{5\}\}%
+          {\textbackslash}pbox<t>\{{\textbackslash}ajNenrei\{2\}\{25\}\}%
+          \tcblower
+          \ibmfamily
+          \pbox<t>{\ajNenrei{1}{3}}%
+          \pbox<t>{\ajNenrei{1}{13}}、%
+          \pbox<t>{\ajNenrei{2}{5}}%
+          \pbox<t>{\ajNenrei{2}{25}}%
+        \end{demosource}
+    \end{itemize}
+  %%
+  \item \cmd{ajNenrei\{\textlrangle{3, 4}\}\{\textlrangle{1 -- 99}\}}（縦組のみ横組では意味をなさない）
+    \begin{demosource}[0.25]
+      {\textbackslash}pbox<t>\{{\textbackslash}ajNenrei\{3\}\{7\}\}%
+      {\textbackslash}pbox<t>\{{\textbackslash}ajNenrei\{3\}\{37\}\}、\\%
+      {\textbackslash}pbox<t>\{{\textbackslash}ajNenrei\{4\}\{9\}\}%
+      {\textbackslash}pbox<t>\{{\textbackslash}ajNenrei\{4\}\{59\}\}%
+      \tcblower
+      \ibmfamily
+      \pbox<t>{\ajNenrei{3}{7}}%
+      \pbox<t>{\ajNenrei{3}{37}}、%
+      \pbox<t>{\ajNenrei{4}{9}}%
+      \pbox<t>{\ajNenrei{4}{59}}%
+    \end{demosource}
+  %%
+  \item \cmd{ajnenrei\{\textlrangle{1, 2, 3, 4}\}\{\textlrangle{1 -- 99}\}}（組方向に拘わらず結果は同じ）
+    \begin{demosource}[0.25]
+      {\textbackslash}ajnenrei\{1\}\{3\}%
+      {\textbackslash}ajnenrei\{2\}\{5\}\\%
+      {\textbackslash}ajnenrei\{3\}\{7\}%
+      {\textbackslash}ajnenrei\{4\}\{9\}%
+      \tcblower
+      \ibmfamily
+      \ajnenrei{1}{3}
+      \ajnenrei{2}{5}
+      \ajnenrei{3}{7}
+      \ajnenrei{4}{9}
+    \end{demosource}
+\end{itemize}
+
+\vfil
+\subsection{\texorpdfstring{\cmd{ajTsumekakko}}{\textbackslash ajTsumekakko}}
+
+\cmd{ajTsumekakko}は組方向によって結果が異なります。ただし、横組1桁の場合は結果が崩れてしまうようです。
+加えて、\cmd{ajNenrei\{0\}}も同じ結果を得ます。
+
+\begin{center}
+  \begin{booktabular}{cl@{\hspace{2zw}}l}
+    \thead{組方向}\ & \thead{1 -- 9} & \thead{10 --} \\
+    \midrule
+    \textgt{横} &
+    % {\ibmfamily \ajTsumekakko{1}\,\ajTsumekakko{2}\,\ajTsumekakko{3}\middots[0.3zw]\ajTsumekakko{8}\,\ajTsumekakko{9}}&
+    {\ttfamily --} &
+    {\ibmfamily \ajTsumekakko{10}\,\ajTsumekakko{11}\,\ajTsumekakko{12}\middots[0.3zw]\ajTsumekakko{98}\,\ajTsumekakko{99}\,\ajTsumekakko{100}\middots[0.3zw]}
+    \\
+    \textgt{縦} &
+    {\ibmfamily {\pbox<t>{\ajTsumekakko{1}}}\,{\pbox<t>{\ajTsumekakko{2}}}\,{\pbox<t>{\ajTsumekakko{3}}}\middots[0.5zw]{\pbox<t>{\ajTsumekakko{8}}}\,{\pbox<t>{\ajTsumekakko{9}}}} &
+    {\ibmfamily \raisebox{-0.5zw}{\pbox<t>{\ajTsumekakko{10}}}\,\raisebox{-0.5zw}{\pbox<t>{\ajTsumekakko{11}}}\,\raisebox{-0.5zw}{\pbox<t>{\ajTsumekakko{12}}}\middots[0.5zw]\raisebox{-0.5zw}{\pbox<t>{\ajTsumekakko{98}}}\,\raisebox{-0.5zw}{\pbox<t>{\ajTsumekakko{99}}}\,\raisebox{-0.5zw}{\pbox<t>{\ajTsumekakko{100}}}\middots[0.5zw]\,\raisebox{-1zw}{\pbox<t>{\ajTsumekakko{1999}}}}
+    \\[0.8zw]
+  \end{booktabular}
+\end{center}
+
+\vfil
+
+\subsection{\texorpdfstring{\cmd{ajNenrei}}{\textbackslash ajNenrei}（横組）}
+
+横組の\cmd{ajNenrei\{\textlrangle{1, 2}\}}は以下のようになります。\cmd{ajNenrei\{\textlrangle{3, 4}\}}は横組では意味をなさないため掲示していません。（例：\cmd{ajNenrei\{3\}\{1\}\,→\,{\ibmfamily\ajNenrei{3}{1}}}）
+
+\begin{center}
+  \begin{booktabular}{cll}
+    \diagbox[font=\sffamily\gtfamily\small]{第1引数}{第2引数} & \thead{1 -- 9} & \thead{10 -- 99} \\
+    \hline
+    {\texttt{1} {\scriptsize (つ)}} &
+    {\ibmfamily \ajNenrei{1}{1}\,\ajNenrei{1}{2}\,\ajNenrei{1}{3}\middots[0.3zw]\ajNenrei{1}{8}\,\ajNenrei{1}{9}} &
+    {\ibmfamily \ajNenrei{1}{10}\,\ajNenrei{1}{11}\,\ajNenrei{1}{12}\middots[0.3zw]\ajNenrei{1}{98}\,\ajNenrei{1}{99}}
+    \\
+    {\texttt{2} {\scriptsize (才)}} &
+    {\ibmfamily \ajNenrei{2}{1}\,\ajNenrei{2}{2}\,\ajNenrei{2}{3}\middots[0.3zw]\ajNenrei{2}{8}\,\ajNenrei{2}{9}} &
+    {\ibmfamily \ajNenrei{2}{10}\,\ajNenrei{2}{11}\,\ajNenrei{2}{12}\middots[0.3zw]\ajNenrei{2}{98}\,\ajNenrei{2}{99}}
+    \\
+  \end{booktabular}
+\end{center}
+
+\subsection{\texorpdfstring{\cmd{ajNenrei}}{\textbackslash ajNenrei}（縦組）}
+
+縦組の\cmd{ajNenrei\{\textlrangle{1, 2, 3, 4}\}}は以下のようになります。\cmd{ajNenrei\{\textlrangle{3, 4}\}}の第2引数が3桁になる場合、意味をなさないため掲示していません。（例：\cmd{ajNenrei\{3\}\{100\}\,→\,{\ibmfamily\pbox<t>{\ajNenrei{3}{100}}}}）
+
+\begin{center}
+  \begin{booktabular}{ccccccc}
+    \diagbox[font=\sffamily\gtfamily\small]{第1引数}{第2引数} & \thead{1 -- 9} & \thead{10} & \thead{11 -- 19} & \thead{20 -- 99} & \thead{100 --} \\
+    \hline
+    \raisebox{0.7zw}{\texttt{1} {\scriptsize (つ)}} &
+    {\ibmfamily \pbox<t>{\ajNenrei{1}{1}}\,\pbox<t>{\ajNenrei{1}{2}}\,\pbox<t>{\ajNenrei{1}{3}}\middots\pbox<t>{\ajNenrei{1}{8}}\,\pbox<t>{\ajNenrei{1}{9}}} &
+    {\ibmfamily \pbox<t>{\ajNenrei{1}{10}}} &
+    {\ibmfamily \pbox<t>{\ajNenrei{1}{11}}\,\pbox<t>{\ajNenrei{1}{12}}\,\pbox<t>{\ajNenrei{1}{13}}\middots\pbox<t>{\ajNenrei{1}{18}}\,\pbox<t>{\ajNenrei{1}{19}}} &
+    {\ibmfamily \pbox<t>{\ajNenrei{1}{20}}\,\pbox<t>{\ajNenrei{1}{21}}\,\pbox<t>{\ajNenrei{1}{22}}\middots\pbox<t>{\ajNenrei{1}{98}}\,\pbox<t>{\ajNenrei{1}{99}}} &
+    {\ibmfamily \pbox<t>{\ajNenrei{1}{100}}\,\pbox<t>{\ajNenrei{1}{101}}\,\pbox<t>{\ajNenrei{1}{102}}\middots\pbox<t>{\ajNenrei{1}{1098}}\,\pbox<t>{\ajNenrei{1}{1099}}}
+    \\
+    \raisebox{0.7zw}{\texttt{2} {\scriptsize (才)}} &
+    {\ibmfamily \pbox<t>{\ajNenrei{2}{1}}\,\pbox<t>{\ajNenrei{2}{2}}\,\pbox<t>{\ajNenrei{2}{3}}\middots\pbox<t>{\ajNenrei{2}{8}}\,\pbox<t>{\ajNenrei{2}{9}}} &
+    {\ibmfamily \pbox<t>{\ajNenrei{2}{10}}} &
+    {\ibmfamily \pbox<t>{\ajNenrei{2}{11}}\,\pbox<t>{\ajNenrei{2}{12}}\,\pbox<t>{\ajNenrei{2}{13}}\middots\pbox<t>{\ajNenrei{2}{18}}\,\pbox<t>{\ajNenrei{2}{19}}} &
+    {\ibmfamily \pbox<t>{\ajNenrei{2}{20}}\,\pbox<t>{\ajNenrei{2}{21}}\,\pbox<t>{\ajNenrei{2}{22}}\middots\pbox<t>{\ajNenrei{2}{98}}\,\pbox<t>{\ajNenrei{2}{99}}} &
+    {\ibmfamily \pbox<t>{\ajNenrei{2}{100}}\,\pbox<t>{\ajNenrei{2}{101}}\,\pbox<t>{\ajNenrei{2}{102}}\middots\pbox<t>{\ajNenrei{2}{1098}}\,\pbox<t>{\ajNenrei{2}{1099}}}
+    \\
+    \raisebox{0.7zw}{\texttt{3} {\scriptsize (つ)}} &
+    {\ibmfamily \pbox<t>{\ajNenrei{3}{1}}\,\pbox<t>{\ajNenrei{3}{2}}\,\pbox<t>{\ajNenrei{3}{3}}\middots\pbox<t>{\ajNenrei{3}{8}}\,\pbox<t>{\ajNenrei{3}{9}}} &
+    {\ibmfamily \pbox<t>{\ajNenrei{3}{10}}} &
+    {\ibmfamily \pbox<t>{\ajNenrei{3}{11}}\,\pbox<t>{\ajNenrei{3}{12}}\,\pbox<t>{\ajNenrei{3}{13}}\middots\pbox<t>{\ajNenrei{3}{18}}\,\pbox<t>{\ajNenrei{3}{19}}} &
+    {\ibmfamily \pbox<t>{\ajNenrei{3}{20}}\,\pbox<t>{\ajNenrei{3}{21}}\,\pbox<t>{\ajNenrei{3}{22}}\middots\pbox<t>{\ajNenrei{3}{98}}\,\pbox<t>{\ajNenrei{3}{99}}} &
+    \texttt{--}
+    \\
+    \raisebox{0.7zw}{\texttt{4} {\scriptsize (才)}} &
+    {\ibmfamily \pbox<t>{\ajNenrei{4}{1}}\,\pbox<t>{\ajNenrei{4}{2}}\,\pbox<t>{\ajNenrei{4}{3}}\middots\pbox<t>{\ajNenrei{4}{8}}\,\pbox<t>{\ajNenrei{4}{9}}} &
+    {\ibmfamily \pbox<t>{\ajNenrei{4}{10}}} &
+    {\ibmfamily \pbox<t>{\ajNenrei{4}{11}}\,\pbox<t>{\ajNenrei{4}{12}}\,\pbox<t>{\ajNenrei{4}{13}}\middots\pbox<t>{\ajNenrei{4}{18}}\,\pbox<t>{\ajNenrei{4}{19}}} &
+    {\ibmfamily \pbox<t>{\ajNenrei{4}{20}}\,\pbox<t>{\ajNenrei{4}{21}}\,\pbox<t>{\ajNenrei{4}{22}}\middots\pbox<t>{\ajNenrei{4}{98}}\,\pbox<t>{\ajNenrei{4}{99}}} &
+    \texttt{--}
+    \\
+  \end{booktabular}
+\end{center}
+
+\subsection{\texorpdfstring{\cmd{ajnenrei}}{\textbackslash ajnenrei}}
+
+\cmd{ajnenrei}は組方向に拘わらず同じ結果を得ます。
+これらのコマンドは第2引数によって軽微に挙動が変わります。以下の表を参照してください。
+
+\begin{center}
+  \begin{booktabular}{cccccc}
+    \diagbox[font=\sffamily\gtfamily\small]{第1引数}{第2引数} & \thead{1 -- 9} & \thead{10} & \thead{11 -- 19} & \thead{20 -- } \\
+    \hline
+    \raisebox{0.7zw}{\texttt{1} {\scriptsize (つ)}} &
+    {\ibmfamily \ajnenrei{1}{1}\,\ajnenrei{1}{2}\,\ajnenrei{1}{3}\middots\ajnenrei{1}{8}\,\ajnenrei{1}{9}} &
+    {\ibmfamily \ajnenrei{1}{10}} &
+    {\ibmfamily \ajnenrei{1}{11}\,\ajnenrei{1}{12}\,\ajnenrei{1}{13}\middots\ajnenrei{1}{18}\,\ajnenrei{1}{19}} &
+    {\ibmfamily \ajnenrei{1}{20}\,\ajnenrei{1}{21}\,\ajnenrei{1}{22}\middots\ajnenrei{1}{98}\,\ajnenrei{1}{99}} \\
+    \raisebox{0.7zw}{\texttt{2} {\scriptsize (才)}} &
+    {\ibmfamily \ajnenrei{2}{1}\,\ajnenrei{2}{2}\,\ajnenrei{2}{3}\middots\ajnenrei{2}{8}\,\ajnenrei{2}{9}} &
+    {\ibmfamily \ajnenrei{2}{10}} &
+    {\ibmfamily \ajnenrei{2}{11}\,\ajnenrei{2}{12}\,\ajnenrei{2}{13}\middots\ajnenrei{2}{18}\,\ajnenrei{2}{19}} &
+    {\ibmfamily \ajnenrei{2}{20}\,\ajnenrei{2}{21}\,\ajnenrei{2}{22}\middots\ajnenrei{2}{98}\,\ajnenrei{2}{99}} \\
+    \raisebox{0.7zw}{\texttt{3} {\scriptsize (ツ)}} &
+    {\ibmfamily \pbox<t>{\ajnenrei{3}{1}}\,\pbox<t>{\ajnenrei{3}{2}}\,\pbox<t>{\ajnenrei{3}{3}}\middots\pbox<t>{\ajnenrei{3}{8}}\,\pbox<t>{\ajnenrei{3}{9}}} &
+    {\ibmfamily \pbox<t>{\ajnenrei{3}{10}}} &
+    {\ibmfamily \pbox<t>{\ajnenrei{3}{11}}\,\pbox<t>{\ajnenrei{3}{12}}\,\pbox<t>{\ajnenrei{3}{13}}\middots\pbox<t>{\ajnenrei{3}{18}}\,\pbox<t>{\ajnenrei{3}{19}}} &
+    {\ibmfamily \pbox<t>{\ajnenrei{3}{20}}\,\pbox<t>{\ajnenrei{3}{21}}\,\pbox<t>{\ajnenrei{3}{22}}\middots\pbox<t>{\ajnenrei{3}{98}}\,\pbox<t>{\ajnenrei{3}{99}}} \\
+    \raisebox{0.7zw}{\texttt{4} {\scriptsize (コ)}} &
+    {\ibmfamily \pbox<t>{\ajnenrei{4}{1}}\,\pbox<t>{\ajnenrei{4}{2}}\,\pbox<t>{\ajnenrei{4}{3}}\middots\pbox<t>{\ajnenrei{4}{8}}\,\pbox<t>{\ajnenrei{4}{9}}} &
+    {\ibmfamily \pbox<t>{\ajnenrei{4}{10}}} &
+    {\ibmfamily \pbox<t>{\ajnenrei{4}{11}}\,\pbox<t>{\ajnenrei{4}{12}}\,\pbox<t>{\ajnenrei{4}{13}}\middots\pbox<t>{\ajnenrei{4}{18}}\,\pbox<t>{\ajnenrei{4}{19}}} &
+    {\ibmfamily \pbox<t>{\ajnenrei{4}{20}}\,\pbox<t>{\ajnenrei{4}{21}}\,\pbox<t>{\ajnenrei{4}{22}}\middots\pbox<t>{\ajnenrei{4}{98}}\,\pbox<t>{\ajnenrei{4}{99}}} \\
+  \end{booktabular}
+\end{center}
+
+これに加えて\cmd{ajnunrei\{4\}}のショートカットとして\cmd{ajKosu}が定義されています。
+
+\newpage
+\section{分数：\texorpdfstring{\cmd{ajFrac}}{\textbackslash ajFrac}}
+
+数式中の分数と同じようにすることで文中用の分数を扱うことが出来ます。ただし、この分数はグリフとして登録されているもののみに限ります。
+
+\begin{itemize}
+  \item \cmd{ajFrac\{\textlrangle{分子}\}\{\textlrangle{分母}\}}
+  \item \cmd{ajFrac*\{\textlrangle{分子}\}\{\textlrangle{分母}\}}
+\end{itemize}
+
+例えば以下のように利用されます。
+
+\begin{demosource}
+  らんま{\textbackslash}ajFrac\{1\}\{2\}、\% \\
+  らんま{\textbackslash}ajFrac*\{1\}\{2\}
+  \tcblower
+  らんま{\ibmfamily\ajFrac{1}{2}}、%
+  らんま{\ibmfamily\ajFrac*{1}{2}}
+\end{demosource}
+
+分母は2から12であり、真分数となるような45の分数（各2スタイル）が提供されています。加えて、例外として{\eghostguarded{\ibmfamily\ajFrac{0}{3}}}と{\eghostguarded{\ibmfamily\ajFrac{1}{100}}}があります。
+また、約分可能な分数は既約分数のグリフが出力されます。以下の表では灰色網掛けとなっている部分が既約分数となっています。
+
+\noindent
+\begin{booktabular}{c|*{10}{c}}
+  \diagbox[font=\small\gtfamily]{分母}{分子}
+                & \texttt{0}   & \texttt{1}    & \texttt{2}    & \texttt{3}    & \texttt{4}    & \texttt{5}    & \texttt{6}    & \texttt{7}   & \middots[0.2zw] \\
+  \hline
+  \texttt{2}    & -            & \ajFS{1}{2}   & -             & -             & -             & -             & -             & -            & \multirow{12}{*}{\middots[0.2zw]} \\
+  \texttt{3}    & \ajFS{0}{3}  & \ajFS{1}{3}   & \ajFS{2}{3}   & -             & -             & -             & -             & -            &  \\
+  \texttt{4}    & -            & \ajFS{1}{4}   & \ajFS*{2}{4}  & \ajFS{3}{4}   & -             & -             & -             & -            &  \\
+  \texttt{5}    & -            & \ajFS{1}{5}   & \ajFS{2}{5}   & \ajFS{3}{5}   & \ajFS{4}{5}   & -             & -             & -            &  \\
+  \texttt{6}    & -            & \ajFS{1}{6}   & \ajFS*{2}{6}  & \ajFS*{3}{6}  & \ajFS*{4}{6}  & \ajFS{5}{6}   & -             & -            &  \\
+  \texttt{7}    & -            & \ajFS{1}{7}   & \ajFS{2}{7}   & \ajFS{3}{7}   & \ajFS{4}{7}   & \ajFS{5}{7}   & \ajFS{6}{7}   & -            &  \\
+  \texttt{8}    & -            & \ajFS{1}{8}   & \ajFS*{2}{8}  & \ajFS{3}{8}   & \ajFS*{4}{8}  & \ajFS{5}{8}   & \ajFS*{6}{8}  & \ajFS{7}{8}  &  \\
+  \texttt{9}    & -            & \ajFS{1}{9}   & \ajFS{2}{9}   & \ajFS*{3}{9}  & \ajFS{4}{9}   & \ajFS{5}{9}   & \ajFS*{6}{9}  & \ajFS{7}{9}  &  \\
+  \texttt{10}   & -            & \ajFS{1}{10}  & \ajFS*{2}{10} & \ajFS{3}{10}  & \ajFS*{4}{10} & \ajFS*{5}{10} & \ajFS*{6}{10} & \ajFS{7}{10} &  \\
+  \texttt{11}   & -            & \ajFS{1}{11}  & \ajFS{2}{11}  & \ajFS{3}{11}  & \ajFS{4}{11}  & \ajFS{5}{11}  & \ajFS{6}{11}  & \ajFS{7}{11} &  \\
+  \texttt{12}   & -            & \ajFS{1}{12}  & \ajFS*{2}{12} & \ajFS*{3}{12} & \ajFS*{4}{12} & \ajFS{5}{12}  & \ajFS*{6}{12} & \ajFS{7}{12} &  \\
+  \texttt{100}  & -            & \ajFS{1}{100} & -             & -             & -             & -             & -             & -            &  \\
+\end{booktabular}
+
+\vfill
+\hfill
+\begin{booktabular}{*{5}{c}|c}
+  \middots[0.2zw]     & \texttt{8}    & \texttt{9}     & \texttt{10}    & \texttt{11}   &
+    \diagbox[font=\small\gtfamily, dir=NE]{分子}{分母} \\
+  \hline
+  \multirow{8}{*}{\middots}
+      & -             & -             & -              & -             & \texttt{2}   \\[-0.5zw]
+      &               &               &                &               & \vdots       \\[-0.5zw]
+      & -             & -             & -              & -             & \texttt{8}   \\
+      & \ajFS{8}{9}   & -             & -              & -             & \texttt{9}   \\
+      & \ajFS*{8}{10} & \ajFS{9}{10}  & -              & -             & \texttt{10}  \\
+      & \ajFS{8}{11}  & \ajFS{9}{11}  & \ajFS{10}{11}  & -             & \texttt{11}  \\
+      & \ajFS*{8}{12} & \ajFS*{9}{12} & \ajFS*{10}{12} & \ajFS{11}{12} & \texttt{12}  \\
+      & -             & -             & -              & -             & \texttt{100} \\
+\end{booktabular}
+
+\newpage
+\section{矢印：\texorpdfstring{\cmd{ajArrow}}{\textbackslash ajArrow}}
+
+\cmd{ajArrow}を用いることで引数に応じた矢印を出力できます。
+
+加えて、引数に{\optast}や\eghostguarded{\texttt{+}}、\eghostguarded{\texttt{/}}を含まないものは\cmd{ajArrow\textlrangle{\jpincmd{引数}}}として表現することも可能です。
+
+\begin{demosource}
+  {\textbackslash}ajArrow\{LeftHand\} 前のページ{\textbackslash}hfill\\
+  次のページ {\textbackslash}ajArrowRightHand
+  \tcblower
+  {\ibmfamily\ajArrow{LeftHand}} 前のページ
+  \hfill
+  次のページ {\ibmfamily\ajArrowRightHand}
+\end{demosource}
+
+\begin{center}
+  \begin{booktabular}{cp{17zw}}
+    \thead{記号} & \thead{引数\hfill 専用コマンド} \\
+    \midrule
+    \ajAS{LeftTriangle}         \\
+    \ajAS{RightTriangle}        \\
+    \ajAS*{LeftTriangle*}       \\
+    \ajAS*{RightTriangle*}      \\
+    \ajAS{UP}                   \\
+    \ajAS{DOWN}                 \\
+    \ajAS{LEFT}                 \\
+    \ajAS{RIGHT}                \\
+    \ajAS{Up}                   \\
+    \ajAS{Down}                 \\
+    \ajAS{Left}                 \\
+    \ajAS{Right}                \\
+    \ajAS*{UP*}                 \\
+    \ajAS*{DOWN*}               \\
+    \ajAS*{LEFT*}               \\
+    \ajAS*{RIGHT*}              \\
+    \ajAS*{Up+}                 \\
+    \ajAS*{Down+}               \\
+    \ajAS*{Left+}               \\
+    \ajAS*{Right+}              \\
+    \ajAS*{UpDown+}             \\
+    \ajAS*{LeftRight+}          \\
+    \ajAS*{LeftRight*}          \\
+    \ajAS*{Up/Down}             \\
+    \ajAS*{Down/Up}             \\
+    \ajAS*{Left/Right}          \\
+    \ajAS*{Right/Left}          \\
+    \ajAS*{Down/Up+}            \\
+    \ajAS*{Right/Left+}         \\
+  \end{booktabular}
+  \hfil
+  \begin{booktabular}{cp{18zw}}
+    \thead{記号} & \thead{引数\hfill 専用コマンド} \\
+    \midrule
+    \ajAS*{Left/Right*}         \\
+    \ajAS*{Right/Left*}         \\
+    \ajAS{LeftDouble}           \\
+    \ajAS{RightDouble}          \\
+    \ajAS{LeftRightDouble}      \\
+    \ajAS{LeftUp}               \\
+    \ajAS{LeftDown}             \\
+    \ajAS{RightUp}              \\
+    \ajAS{RightDown}            \\
+    \ajAS*{RightUp*}            \\
+    \ajAS*{RightDown*}          \\
+    \ajAS{UpAngle}              \\
+    \ajAS{DownAngle}            \\
+    \ajAS{LeftAngle}            \\
+    \ajAS{RightAngle}           \\
+    \ajAS*{UpAngle*}            \\
+    \ajAS*{DownAngle*}          \\
+    \ajAS*{LeftAngle*}          \\
+    \ajAS*{RightAngle*}         \\
+    \ajAS{RightHand}            \\
+    \ajAS{UpHand}               \\
+    \ajAS{DownHand}             \\
+    \ajAS{LeftHand}             \\
+    \ajAS{UpScissors}           \\
+    \ajAS{DownScissors}         \\
+    \ajAS{LeftScissors}         \\
+    \ajAS{RightScissors}        \\
+  \end{booktabular}
+\end{center}
+
+\section{ピクチャー記号：\texorpdfstring{\cmd{ajPICT}}{\textbackslash ajPICT}}
+
+\cmd{ajPICT}を用いることで引数に応じたピクチャー記号を出力できます。
+同様に\cmd{\jpincmd{※}}も同じ記号を出力できます。
+
+\begin{demosource}
+  カンペキに勝つ{\textbackslash}ajPICT\{Club*\}だろ？\<
+  ゴン{\textbackslash}※\{Heart*\}
+  \tcblower
+  カンペキに勝つ\ajPICT{Club*}だろ？ゴン\※{Heart*}
+\end{demosource}
+
+\begin{center}
+  \begin{booktabular}{cp{13zw}}
+    \thead{記号} & \thead{引数\hfill 専用コマンド} \\
+    \midrule
+    \ajPS{Club}      \\
+    \ajPS*{Club*}    \\
+    \ajPS{Heart}     \\
+    \ajPS*{Heart*}   \\
+    \ajPS{Spade}     \\
+    \ajPS*{Spade*}   \\
+    \ajPS{Diamond}   \\
+    \ajPS*{Diamond*} \\
+    \ajPS{→}         \\
+    \ajPS{←}         \\
+    \ajPS{↑}         \\
+    \ajPS{↓}         \\
+  \end{booktabular}
+  \hfil
+  \begin{booktabular}{cp{13zw}}
+    \thead{記号} & \thead{引数\hfill 専用コマンド} \\
+    \midrule
+    \ajPS+{電話}     \\
+    \ajPS+{〒}       \\
+    \ajPS+{晴}       \\
+    \ajPS+{曇}       \\
+    \ajPS+{雨}       \\
+    \ajPS+{雪}       \\
+    \ajPS+{野球}     \\
+    \ajPS+{サッカー} \\
+    \ajPS+{花}       \\
+    \ajPS*+{花*}     \\
+    \ajPS+{湯}       \\
+  \end{booktabular}
+\end{center}
+
+\section{合字(Ligature)：\texorpdfstring{\cmd{ajLig}}{\textbackslash ajLig}}
+
+\cmd{ajLig}を用いることで合字（{\ibmfamily\ajLig{平成}}）や組文字（{\ibmfamily\ajLig{株式会社}}）、囲み文字（{\ibmfamily\ajLig{■例}}）等を得ることが出来ます。
+
+\begin{demosource}
+  {\textbackslash}ajLig\{昭和\}、
+  {\textbackslash}ajLig\{か゜\}、
+  {\textbackslash}ajLig\{km3\}、\\
+  {\textbackslash}ajLig\{サンチーム\}、
+  {\textbackslash}ajLig\{株式会社\}、
+  {\textbackslash}ajLig\{○〒\}。
+  \tcblower
+  \ajLig{昭和}、
+  \ajLig{か゜}、
+  \ajLig{km3}、
+  \ajLig{サンチーム}、
+  \ajLig{株式会社}、
+  \ajLig{○〒}。
+\end{demosource}
+
+\vfil
+\subsection{和文合字、年号、感嘆符・疑問符}
+
+\begin{center}
+  \begin{booktabular}{>{\ttfamily\small}p{3zw}c}
+    \thead{引数} & \thead{合字} \\
+    \midrule
+    \ajLigKana{より}   \\
+    \ajLigKana{升}     \\
+    \ajLigKana{コト}   \\
+    \ajLigKana{JIS}    \\
+    \ajLigKana*{JAS}    \\
+  \end{booktabular}
+  \hfil
+  \begin{booktabular}{>{\ttfamily\small}C{3zw}cc}
+    \thead{引数} & \thead{横組} & \thead{縦組} \\
+    \midrule
+    \ajLigKumimoji{明治}{0} \\
+    \ajLigKumimoji{大正}{0} \\
+    \ajLigKumimoji{昭和}{0} \\
+    \ajLigKumimoji{平成}{1} \\
+    \ajLigKumimoji{令和}{7} \\
+  \end{booktabular}
+  \hfil
+  \begin{booktabular}{>{\ttfamily}C{3zw}c}
+    \thead{引数} & \thead{合字} \\
+    \midrule
+    \ajLigPunc{!!}  \\
+    \ajLigPunc{!?}  \\
+    \ajLigPunc{?!}  \\
+    \ajLigPunc{??}  \\
+  \end{booktabular}
+  \hfil
+  \begin{booktabular}{>{\ttfamily}C{3zw}c}
+    \thead{引数} & \thead{合字} \\
+    \midrule
+    \ajLigPunc{!*}  \\
+    \ajLigPunc{!!*} \\
+    \ajLigPunc{!?*} \\
+  \end{booktabular}
+\end{center}
+
+\pkg{otf}では感嘆符・疑問符の後にアキが挿入されますが、\cmd{ajLig}で表現される感嘆符・疑問符の後にアキは挿入されません。
+
+\begin{demosource}
+  なんで{\textbackslash}ajLig\{??\}なんで
+  \tcblower
+  なんで\ajLig{??}なんで
+\end{demosource}
+
+\vfil
+\subsection{仮名の濁音化・半濁音化、小書き}
+
+濁音には「\,{\ibmfamily \raisebox{-0.2zw}{゛}}\subUCN{309B}」、半濁音には「\,{\ibmfamily \raisebox{-0.2zw}{゜}}\subUCN{309C}」を使用します。
+
+\begin{center}
+  \begin{booktabular}{>{\ttfamily\small}lc}
+    \thead{引数} & \thead{合字} \\
+    \midrule
+    \ajLigKana{う゛} \\
+    \ajLigKana{ワ゛} \\
+    \ajLigKana{ヰ゛} \\
+    \ajLigKana{ヱ゛} \\
+    \ajLigKana{ヲ゛} \\
+  \end{booktabular}\hfil
+  \colorbox{\tabularColor}{%
+  \begin{booktabular}{>{\ttfamily\small}lc}
+    \thead{引数} & \thead{合字} \\
+    \midrule
+    \ajLigKana{か゜} \\
+    \ajLigKana{き゜} \\
+    \ajLigKana{く゜} \\
+    \ajLigKana{け゜} \\
+    \ajLigKana{こ゜} \\
+  \end{booktabular}}\hfil
+  \begin{booktabular}{>{\ttfamily\small}lc}
+    \thead{引数} & \thead{合字} \\
+    \midrule
+    \ajLigKana{カ゜} \\
+    \ajLigKana{キ゜} \\
+    \ajLigKana{ク゜} \\
+    \ajLigKana{ケ゜} \\
+    \ajLigKana{コ゜} \\
+  \end{booktabular}\hfil
+  \colorbox{\tabularColor}{%
+  \begin{booktabular}{>{\ttfamily\small}lc}
+    \thead{引数} & \thead{合字} \\
+    \midrule
+    \ajLigKana{セ゜} \\
+    \ajLigKana{ツ゜} \\
+    \ajLigKana{ト゜} \\
+  \end{booktabular}}\hfil
+  \begin{booktabular}{>{\ttfamily\small}lc}
+    \thead{引数} & \thead{合字} \\
+    \midrule
+    \ajLigKana{小か} \\
+    \ajLigKana{小け} \\
+    \ajLigKana*{小こ} \\
+    \ajLigKana*{小コ} \\
+    \ajLigKana{小ク} \\
+    \ajLigKana{小シ} \\
+    \ajLigKana{小ス} \\
+  \end{booktabular}\hfil
+  \colorbox{\tabularColor}{%
+  \begin{booktabular}{>{\ttfamily\small}lc}
+    \thead{引数} & \thead{合字} \\
+    \midrule
+    \ajLigKana{小ト} \\
+    \ajLigKana{小ヌ} \\
+    \ajLigKana{小ハ} \\
+    \ajLigKana{小ヒ} \\
+    \ajLigKana{小フ} \\
+    \ajLigKana{小ヘ} \\
+    \ajLigKana{小ホ} \\
+  \end{booktabular}}\hfil
+  \begin{booktabular}{>{\ttfamily\small}lc}
+    \thead{引数} & \thead{合字} \\
+    \midrule
+    \ajLigKana{小プ} \\
+    \ajLigKana{小ム} \\
+    \ajLigKana{小ラ} \\
+    \ajLigKana{小リ} \\
+    \ajLigKana{小ル} \\
+    \ajLigKana{小レ} \\
+    \ajLigKana{小ロ} \\
+  \end{booktabular}
+\end{center}
+
+これらの仮名は濁音・半濁音を組み合わせたり大きさを調整しているわけではなく、そのように構成されたグリフを使用しています。そのため、\cmd{ajLig\{\jpincmd{あ゛}\}}としても「あ」に濁点は与えられません。
+
+\vfil
+\subsection{欧文合字}
+
+80の欧文合字があります。
+引数となるラテン文字のcaseやスラッシュ(\eghostguarded{\texttt{/}})、ピリオド(\eghostguarded{\texttt{.}})を忘れないようにしてください。
+
+\newcommand{\ajLigLt}[2]{#1 & {\ibmfamily\ajLig{#1}}}
+
+\begin{center}
+  \begin{booktabular}{>{\ttfamily\small}lc}
+    \thead{引数} & \thead{合字} \\
+    \midrule
+    \ajLigLt{a.m.}{4}   \\
+    \ajLigLt{a/c}{4}    \\
+    \ajLigLt{AM}{4}     \\
+    \ajLigLt{c.c.}{4}   \\
+    \ajLigLt{c/c}{4}    \\
+    \ajLigLt{c/o}{4}    \\
+    \ajLigLt{cal}{4}    \\
+    \ajLigLt{cc}{4}     \\
+    \ajLigLt{cm}{4}     \\
+    \ajLigLt{cm2}{4}    \\
+    \ajLigLt{cm3}{4}    \\
+    \ajLigLt{dB}{4}     \\
+    \ajLigLt{dl}{4}     \\
+    \ajLigLt{dl*}{4}    \\
+    \ajLigLt{Dr.}{6}    \\
+    \ajLigLt{F}{4}      \\
+  \end{booktabular}\hfil
+  \colorbox{\tabularColor}{%
+  \begin{booktabular}{>{\ttfamily\small}lc}
+    \thead{引数} & \thead{合字} \\
+    \midrule
+    \ajLigLt{FAX}{4}    \\
+    \ajLigLt{g}{4}      \\
+    \ajLigLt{GB}{4}     \\
+    \ajLigLt{H2}{6}     \\
+    \ajLigLt{HP}{4}     \\
+    \ajLigLt{hPa}{4}    \\
+    \ajLigLt{Hz}{4}     \\
+    \ajLigLt{in}{4}     \\
+    \ajLigLt{Jr.}{6}    \\
+    \ajLigLt{K.K.}{4}   \\
+    \ajLigLt{KB}{4}     \\
+    \ajLigLt{kcal}{4}   \\
+    \ajLigLt{kg}{4}     \\
+    \ajLigLt{KK.}{4}    \\
+    \ajLigLt{KK}{4}     \\
+    \ajLigLt{kl}{4}     \\
+  \end{booktabular}}\hfil
+  \begin{booktabular}{>{\ttfamily\small}lc}
+    \thead{引数} & \thead{合字} \\
+    \midrule
+    \ajLigLt{kl*}{4}    \\
+    \ajLigLt{km}{4}     \\
+    \ajLigLt{km2}{4}    \\
+    \ajLigLt{km3}{4}    \\
+    \ajLigLt{l}{4}      \\
+    \ajLigLt{l*}{4}     \\
+    \ajLigLt{m}{4}      \\
+    \ajLigLt{m/m}{4}    \\
+    \ajLigLt{m2}{4}     \\
+    \ajLigLt{m3}{4}     \\
+    \ajLigLt{mb}{4}     \\
+    \ajLigLt{MB}{4}     \\
+    \ajLigLt{mg}{4}     \\
+    \ajLigLt{mho}{6}    \\
+    \ajLigLt{microg}{4} \\
+    \ajLigLt{microm}{4} \\
+  \end{booktabular}\hfil
+  \colorbox{\tabularColor}{%
+  \begin{booktabular}{>{\ttfamily\small}lc}
+    \thead{引数} & \thead{合字} \\
+    \midrule
+    \ajLigLt{micros}{4} \\
+    \ajLigLt{min}{4}    \\
+    \ajLigLt{ml}{4}     \\
+    \ajLigLt{ml*}{4}    \\
+    \ajLigLt{mm}{4}     \\
+    \ajLigLt{mm2}{4}    \\
+    \ajLigLt{mm3}{4}    \\
+    \ajLigLt{ms}{4}     \\
+    \ajLigLt{n/m}{4}    \\
+    \ajLigLt{No.}{4}    \\
+    \ajLigLt{No}{4}     \\
+    \ajLigLt{ns}{4}     \\
+    \ajLigLt{Nx}{6}     \\
+    \ajLigLt{O2}{6}     \\
+    \ajLigLt{ohm*}{4}    \\
+    \ajLigLt{Ox}{6}     \\
+  \end{booktabular}}\hfil
+  \begin{booktabular}{>{\ttfamily\small}lc}
+    \thead{引数} & \thead{合字} \\
+    \midrule
+    \ajLigLt{p.m.}{6}   \\
+    \ajLigLt{PH}{4}     \\
+    \ajLigLt{pH}{6}     \\
+    \ajLigLt{PM}{4}     \\
+    \ajLigLt{ppb}{6}    \\
+    \ajLigLt{ppm}{6}    \\
+    \ajLigLt{PR}{4}     \\
+    \ajLigLt{ps}{4}     \\
+    \ajLigLt{Q2}{6}     \\
+    \ajLigLt{sec}{4}    \\
+    \ajLigLt{TB}{4}     \\
+    \ajLigLt{tel}{4}    \\
+    \ajLigLt{Tel}{4}    \\
+    \ajLigLt{TEL}{4}    \\
+    \ajLigLt{tm}{4}     \\
+    \ajLigLt{VS}{4}     \\
+  \end{booktabular}
+\end{center}
+
+\newpage
+\subsection{組文字}
+
+125の仮名組文字と12の漢字組文字があります。
+
+\begin{center}
+  \begin{booktabular}{>{\ttfamily\small}p{7zw}*{2}{c}}
+    \thead{引数} & \thead{横組} & \thead{縦組} \\
+    \midrule
+    \ajLigKumimoji{アール}{4}         \\
+    \ajLigKumimoji{アト}{5}           \\
+    \ajLigKumimoji{アパート}{4}       \\
+    \ajLigKumimoji{アルファ}{5}       \\
+    \ajLigKumimoji{アンペア}{5}       \\
+    \ajLigKumimoji{イニング}{5}       \\
+    \ajLigKumimoji{インチ}{4}         \\
+    \ajLigKumimoji{ウォン}{5}         \\
+    \ajLigKumimoji{ウルシ}{5}         \\
+    \ajLigKumimoji{エーカー}{5}       \\
+    \ajLigKumimoji{エクサ}{5}         \\
+    \ajLigKumimoji{エスクード}{5}     \\
+    \ajLigKumimoji{オーム}{5}         \\
+    \ajLigKumimoji{オンス}{5}         \\
+    \ajLigKumimoji{オントロ}{5}       \\
+    \ajLigKumimoji{カイリ}{5}         \\
+    \ajLigKumimoji{カップ}{5}         \\
+    \ajLigKumimoji{カラット}{5}       \\
+    \ajLigKumimoji{ガル}{6}           \\
+    \ajLigKumimoji{カロリー}{4}       \\
+    \ajLigKumimoji{ガロン}{5}         \\
+    \ajLigKumimoji{ガンマ}{5}         \\
+    \ajLigKumimoji{ギガ}{5}           \\
+    \ajLigKumimoji{ギニー}{5}         \\
+    \ajLigKumimoji{キュリー}{5}       \\
+    \ajLigKumimoji{ギルダー}{5}       \\
+    \ajLigKumimoji{キロ}{4}           \\
+    \ajLigKumimoji{キログラム}{4}     \\
+    \ajLigKumimoji{キロメートル}{4}   \\
+    \ajLigKumimoji{キロリットル}{5}   \\
+    \ajLigKumimoji{キロワット}{5}     \\
+    \ajLigKumimoji{グスーム}{5}       \\
+    \ajLigKumimoji{グラム}{4}         \\
+    \ajLigKumimoji{グラムトン}{5}     \\
+  \end{booktabular}\hfil
+  \colorbox{\tabularColor}{%
+  \begin{booktabular}{>{\ttfamily\small}p{7zw}*{2}{c}}
+    \thead{引数} & \thead{横組} & \thead{縦組} \\
+    \midrule
+    \ajLigKumimoji{クルサード}{5}     \\
+    \ajLigKumimoji{クルゼイロ}{5}     \\
+    \ajLigKumimoji{グレイ}{6}         \\
+    \ajLigKumimoji{クローネ}{5}       \\
+    \ajLigKumimoji{ケース}{5}         \\
+    \ajLigKumimoji{コーポ}{4}         \\
+    \ajLigKumimoji{コルナ}{5}         \\
+    \ajLigKumimoji{サイクル}{5}       \\
+    \ajLigKumimoji{さじ}{5}           \\
+    \ajLigKumimoji{サンチーム}{5}     \\
+    \ajLigKumimoji{シーベルト}{6}     \\
+    \ajLigKumimoji{シェケル}{6}       \\
+    \ajLigKumimoji{ジュール}{6}       \\
+    \ajLigKumimoji{シリング}{5}       \\
+    \ajLigKumimoji{センチ}{4}         \\
+    \ajLigKumimoji{セント}{4}         \\
+    \ajLigKumimoji{ダース}{5}         \\
+    \ajLigKumimoji{デカ}{5}           \\
+    \ajLigKumimoji{デシ}{5}           \\
+    \ajLigKumimoji{デシベル}{6}       \\
+    \ajLigKumimoji{テラ}{5}           \\
+    \ajLigKumimoji{ドット}{6}         \\
+    \ajLigKumimoji{ドラクマ}{5}       \\
+    \ajLigKumimoji{ドル}{4}           \\
+    \ajLigKumimoji{トン}{4}           \\
+    \ajLigKumimoji{ナノ}{5}           \\
+    \ajLigKumimoji{ノット}{5}         \\
+    \ajLigKumimoji{パーセント}{4}     \\
+    \ajLigKumimoji{バーツ}{5}         \\
+    \ajLigKumimoji{バーレル}{5}       \\
+    \ajLigKumimoji{ハイツ}{4}         \\
+    \ajLigKumimoji{バイト}{6}         \\
+    \ajLigKumimoji{パスカル}{5}       \\
+    \ajLigKumimoji{バレル}{5}         \\
+  \end{booktabular}}\hfil
+  \begin{booktabular}{>{\ttfamily\small}p{7zw}*{2}{c}}
+    \thead{引数} & \thead{横組} & \thead{縦組} \\
+    \midrule
+    \ajLigKumimoji{ピアストル}{5}     \\
+    \ajLigKumimoji{ピクル}{5}         \\
+    \ajLigKumimoji{ピコ}{5}           \\
+    \ajLigKumimoji{ビット}{6}         \\
+    \ajLigKumimoji{ビル}{4}           \\
+    \ajLigKumimoji{ファラッド}{5}     \\
+    \ajLigKumimoji{ファラド}{5}       \\
+    \ajLigKumimoji{フィート}{5}       \\
+    \ajLigKumimoji{フェムト}{5}       \\
+    \ajLigKumimoji{ブッシェル}{5}     \\
+    \ajLigKumimoji{フラン}{5}         \\
+    \ajLigKumimoji{ページ}{4}         \\
+    \ajLigKumimoji{ベータ}{5}         \\
+    \ajLigKumimoji{ヘクタール}{4}     \\
+    \ajLigKumimoji{ヘクト}{5}         \\
+    \ajLigKumimoji{ヘクトパスカル}{5} \\
+    \ajLigKumimoji{ベクレル}{6}       \\
+    \ajLigKumimoji{ペセタ}{5}         \\
+    \ajLigKumimoji{ペソ}{5}           \\
+    \ajLigKumimoji{ペタ}{5}           \\
+    \ajLigKumimoji{ペニヒ}{5}         \\
+    \ajLigKumimoji{ヘルツ}{4}         \\
+    \ajLigKumimoji{ペンス}{5}         \\
+    \ajLigKumimoji{ボー}{6}           \\
+    \ajLigKumimoji{ホール}{5}         \\
+    \ajLigKumimoji{ホーン}{4}         \\
+    \ajLigKumimoji{ポイント}{5}       \\
+    \ajLigKumimoji{ボルト}{5}         \\
+    \ajLigKumimoji{ホン}{5}           \\
+    \ajLigKumimoji{ポンド}{5}         \\
+    \ajLigKumimoji{マイクロ}{5}       \\
+    \ajLigKumimoji{マイル}{5}         \\
+    \ajLigKumimoji{マッハ}{5}         \\
+    \ajLigKumimoji{マルク}{5}         \\
+  \end{booktabular}
+\end{center}
+
+\begin{center}
+  \colorbox{\tabularColor}{%
+  \begin{booktabular}{>{\ttfamily\small}p{7zw}*{2}{c}}
+    \thead{引数} & \thead{横組} & \thead{縦組} \\
+    \midrule
+    \ajLigKumimoji{マンション}{4}     \\
+    \ajLigKumimoji{ミクロン}{5}       \\
+    \ajLigKumimoji{ミリ}{4}           \\
+    \ajLigKumimoji{ミリバール}{4}     \\
+    \ajLigKumimoji{メートル}{4}       \\
+    \ajLigKumimoji{メガ}{5}           \\
+    \ajLigKumimoji{メガトン}{5}       \\
+    \ajLigKumimoji{ヤード}{4}         \\
+    \ajLigKumimoji{ヤール}{5}         \\
+    \ajLigKumimoji{ユーロ}{5}         \\
+    \ajLigKumimoji{ユアン}{5}         \\
+    \ajLigKumimoji{ラド}{5}           \\
+  \end{booktabular}}\hfil
+  \begin{booktabular}{>{\ttfamily\small}p{7zw}*{2}{c}}
+    \thead{引数} & \thead{横組} & \thead{縦組} \\
+    \midrule
+    \ajLigKumimoji{ランド}{6}         \\
+    \ajLigKumimoji{リットル}{4}       \\
+    \ajLigKumimoji{リラ}{5}           \\
+    \ajLigKumimoji{リンギット}{6}     \\
+    \ajLigKumimoji{ルーブル}{5}       \\
+    \ajLigKumimoji{ルクス}{5}         \\
+    \ajLigKumimoji{ルピー}{5}         \\
+    \ajLigKumimoji{ルピア}{5}         \\
+    \ajLigKumimoji{レム}{5}           \\
+    \ajLigKumimoji{レントゲン}{5}     \\
+    \ajLigKumimoji{ワット}{4}         \\
+  \end{booktabular}\hfil
+  \colorbox{\tabularColor}{%
+  \begin{booktabular}{>{\ttfamily\small}p{7zw}*{2}{c}}
+    \thead{引数} & \thead{横組} & \thead{縦組} \\
+    \midrule
+    \ajLigKumimoji{株式会社}{4}       \\
+    \ajLigKumimoji{有限会社}{4}       \\
+    \ajLigKumimoji{財団法人}{4}       \\
+    \ajLigKumimoji{医療法人}{5}       \\
+    \ajLigKumimoji{学校法人}{5}       \\
+    \ajLigKumimoji{協同組合}{5}       \\
+    \ajLigKumimoji{共同組合}{5}       \\
+    \ajLigKumimoji{合資会社}{5}       \\
+    \ajLigKumimoji{合名会社}{5}       \\
+    \ajLigKumimoji{社団法人}{5}       \\
+    \ajLigKumimoji{宗教法人}{5}       \\
+    \ajLigKumimoji{郵便番号}{5}       \\
+  \end{booktabular}}
+\end{center}
+
+% \newpage
+\subsubsection{変種のあるもの}
+
+組文字には特に3字のものに対して変種となるグリフがあります。これらを利用するには、引数の末に{\optast}を与えます。この変種グリフは1文字の部分が中央揃えになります。
+
+\begin{demosource}
+  {\textbackslash}ajLig\{\jpincmd{センチ}\}{\textbackslash},\\
+  {\textbackslash}ajLig\{\jpincmd{センチ}*\}
+  \tcblower
+  \ibmfamily\LARGE
+  \ajLig{センチ}\,
+  \ajLig{センチ*}
+\end{demosource}
+
+\begin{center}
+  \begin{booktabular}{>{\ttfamily\small}ccccc}
+    \thead{引数} & \thead{横組} & \thead{横組\optast} & \thead{縦組} & \thead{縦組\optast} \\
+    \midrule
+    \ajLigKumimoji*{センチ}{4} \\
+    \ajLigKumimoji*{グラム}{4} \\
+    \ajLigKumimoji*{アール}{4} \\
+    \ajLigKumimoji*{ワット}{4} \\
+    \ajLigKumimoji*{セント}{4} \\
+    \ajLigKumimoji*{ページ}{4} \\
+  \end{booktabular}
+  \hfil
+  \begin{booktabular}{*{2}{>{\ttfamily\small}p{4zw}cccc}}
+    \thead{引数} & \thead{横組} & \thead{横組\optast} & \thead{縦組} & \thead{縦組\optast} \\
+    \midrule
+    \ajLigKumimoji*{インチ}{4} \\
+    \ajLigKumimoji*{ヤード}{4} \\
+    \ajLigKumimoji*{ヘルツ}{4} \\
+    \ajLigKumimoji*{ホーン}{4} \\
+    \ajLigKumimoji*{コーポ}{4} \\
+    \ajLigKumimoji*{ハイツ}{4} \\
+  \end{booktabular}
+\end{center}
+
+3文字の組文字はこれら以外にも多くありますが、この変種に対応するグリフは{\AdobeJapan[4]}以前に収録されたグリフであり、それ以降の追補では集録されていないため存在しません。
+
+加えて、\cmd{ajLig\{\jpincmd{オングストローム}\}}とその変種があります。この組文字は1文字幅で表現するには非常に文字が細かいため、これを2つに分けた\cmd{ajLig\{\jpincmd{オントロ}\}}（{\ibmfamily\ajLig{オントロ}}）と\cmd{ajLig\{\jpincmd{グスーム}\}}（{\ibmfamily\ajLig{グスーム}}）があります。オングストロームの変種では、これらを連結した2文字幅を出力します。
+
+\begin{center}
+  %% オングストロームは AJ1-4
+  \begin{booktabular}{>{\ttfamily\small}l*{4}{>{\ibmfamily}{c}}}
+    \thead{引数} & \thead{横組} & \thead{横組\optast} & \thead{縦組} & \thead{縦組\optast} \\
+    \midrule
+    オングストローム &
+    \ajLig{オングストローム} &
+    \ajLig{オングストローム*} &
+    \raisebox{0.1zw}{\parbox<t>{1zw}{\ajLig{オングストローム}}} &
+    \parbox<t>{2zw}{\ajLig{オングストローム*}} \\
+  \end{booktabular}
+\end{center}
+
+\newpage
+\subsection{囲み文字}
+
+143の囲み文字があります。
+引数に利用される記号はそれぞれ「○\subUCN{25CB}」、「●\subUCN{25CF}」、「□\subUCN{25A1}」、「■\subUCN{25A0}」、「◇\subUCN{25C7}」、「◆\subUCN{25C6}」、丸括弧は半角丸括弧です。
+
+\newcommand{\ajLigKakomi}[1]{#1 & {\ibmfamily \ajLig{#1}}}
+
+\begin{center}
+  \begin{booktabular}{>{\ttfamily\small}p{3zw}c}
+    \thead{引数} & \thead{合字} \\
+    \midrule
+    \ajLigKakomi{○問} \\
+    \ajLigKakomi{○答} \\
+    \ajLigKakomi{○例} \\
+    \ajLigKakomi{○〒} \\
+    \ajLigKakomi{○上} \\
+    \ajLigKakomi{○下} \\
+    \ajLigKakomi{○中} \\
+    \ajLigKakomi{○企} \\
+    \ajLigKakomi{○休} \\
+    \ajLigKakomi{○優} \\
+    \ajLigKakomi{○写} \\
+    \ajLigKakomi{○出} \\
+    \ajLigKakomi{○副} \\
+    \ajLigKakomi{○労} \\
+    \ajLigKakomi{○医} \\
+    \ajLigKakomi{○協} \\
+    \ajLigKakomi{○印} \\
+    \ajLigKakomi{○右} \\
+    \ajLigKakomi{○名} \\
+    \ajLigKakomi{○基} \\
+    \ajLigKakomi{○増} \\
+    \ajLigKakomi{○夜} \\
+    \ajLigKakomi{○大} \\
+    \ajLigKakomi{○女} \\
+  \end{booktabular}\hfil
+  \colorbox{\tabularColor}{%
+  \begin{booktabular}{>{\ttfamily\small}p{3zw}c}
+    \thead{引数} & \thead{合字} \\
+    \midrule
+    \ajLigKakomi{○学} \\
+    \ajLigKakomi{○宗} \\
+    \ajLigKakomi{○小} \\
+    \ajLigKakomi{○左} \\
+    \ajLigKakomi{○年} \\
+    \ajLigKakomi{○控} \\
+    \ajLigKakomi{○有} \\
+    \ajLigKakomi{○株} \\
+    \ajLigKakomi{○標} \\
+    \ajLigKakomi{○欠} \\
+    \ajLigKakomi{○正} \\
+    \ajLigKakomi{○注} \\
+    \ajLigKakomi{○済} \\
+    \ajLigKakomi{○減} \\
+    \ajLigKakomi{○特} \\
+    \ajLigKakomi{○男} \\
+    \ajLigKakomi{○監} \\
+    \ajLigKakomi{○社} \\
+    \ajLigKakomi{○祝} \\
+    \ajLigKakomi{○禁} \\
+    \ajLigKakomi{○秘} \\
+    \ajLigKakomi{○調} \\
+    \ajLigKakomi{○財} \\
+    \ajLigKakomi{○資} \\
+  \end{booktabular}}\hfil
+  \begin{booktabular}{>{\ttfamily\small}p{3zw}c}
+    \thead{引数} & \thead{合字} \\
+    \midrule
+    \ajLigKakomi{○適} \\
+    \ajLigKakomi{○電} \\
+    \ajLigKakomi{○項} \\
+    \ajLigKakomi{●問} \\
+    \ajLigKakomi{●答} \\
+    \ajLigKakomi{●例} \\
+    \ajLigKakomi{□問}  \\
+    \ajLigKakomi{□答}  \\
+    \ajLigKakomi{□例}  \\
+    \ajLigKakomi{□勝}  \\
+    \ajLigKakomi{□印}  \\
+    \ajLigKakomi{□負}  \\
+    \ajLigKakomi{■問}  \\
+    \ajLigKakomi{■答}  \\
+    \ajLigKakomi{■例}  \\
+    \ajLigKakomi{◇問}    \\
+    \ajLigKakomi{◇答}    \\
+    \ajLigKakomi{◇例}    \\
+    \ajLigKakomi{◇HV}    \\
+    \ajLigKakomi{◇MV}    \\
+    \ajLigKakomi{◇News}  \\
+    \ajLigKakomi{◇PV}    \\
+    \ajLigKakomi{◇S1}    \\
+    \ajLigKakomi{◇S2}    \\
+  \end{booktabular}\hfil
+  \colorbox{\tabularColor}{%
+  \begin{booktabular}{>{\ttfamily\small}p{3zw}c}
+    \thead{引数} & \thead{合字} \\
+    \midrule
+    \ajLigKakomi{◇S3}    \\
+    \ajLigKakomi{◇SS}    \\
+    \ajLigKakomi{◇デ}    \\
+    \ajLigKakomi{◇ほか}  \\
+    \ajLigKakomi{◇二}    \\
+    \ajLigKakomi{◇交}    \\
+    \ajLigKakomi{◇再}    \\
+    \ajLigKakomi{◇前}    \\
+    \ajLigKakomi{◇劇}    \\
+    \ajLigKakomi{◇双}    \\
+    \ajLigKakomi{◇司}    \\
+    \ajLigKakomi{◇声}    \\
+    \ajLigKakomi{◇多}    \\
+    \ajLigKakomi{◇天}    \\
+    \ajLigKakomi{◇後}    \\
+    \ajLigKakomi{◇手}    \\
+    \ajLigKakomi{◇文}    \\
+    \ajLigKakomi{◇新}    \\
+    \ajLigKakomi{◇映}    \\
+    \ajLigKakomi{◇株}    \\
+    \ajLigKakomi{◇気}    \\
+    \ajLigKakomi{◇立}    \\
+    \ajLigKakomi{◇終}    \\
+    \ajLigKakomi{◇解}    \\
+  \end{booktabular}}\hfil
+  \begin{booktabular}{>{\ttfamily\small}p{3zw}c}
+    \thead{引数} & \thead{合字} \\
+    \midrule
+    \ajLigKakomi{◆問}    \\
+    \ajLigKakomi{◆答}    \\
+    \ajLigKakomi{◆例}    \\
+    \ajLigKakomi{(問)}  \\
+    \ajLigKakomi{(答)}  \\
+    \ajLigKakomi{(例)}  \\
+    \ajLigKakomi{(代)}  \\
+    \ajLigKakomi{(企)}  \\
+    \ajLigKakomi{(休)}  \\
+    \ajLigKakomi{(労)}  \\
+    \ajLigKakomi{(協)}  \\
+    \ajLigKakomi{(合)}  \\
+    \ajLigKakomi{(名)}  \\
+    \ajLigKakomi{(呼)}  \\
+    \ajLigKakomi{(営)}  \\
+    \ajLigKakomi{(学)}  \\
+    \ajLigKakomi{(有)}  \\
+    \ajLigKakomi{(株)}  \\
+    \ajLigKakomi{(注)}  \\
+    \ajLigKakomi{(特)}  \\
+    \ajLigKakomi{(監)}  \\
+    \ajLigKakomi{(社)}  \\
+    \ajLigKakomi{(祝)}  \\
+    \ajLigKakomi{(祭)}  \\
+  \end{booktabular}\hfil
+  \colorbox{\tabularColor}{%
+  \begin{booktabular}{>{\ttfamily\small}p{3zw}c}
+    \thead{引数} & \thead{合字} \\
+    \midrule
+    \ajLigKakomi{(自)}  \\
+    \ajLigKakomi{(至)}  \\
+    \ajLigKakomi{(財)}  \\
+    \ajLigKakomi{(資)}  \\
+    \ajLigKakomi{□:A}   \\
+    \ajLigKakomi{□:AM}  \\
+    \ajLigKakomi{□:AS}  \\
+    \ajLigKakomi{□:B}   \\
+    \ajLigKakomi{□:BEL} \\
+    \ajLigKakomi{□:C}   \\
+    \ajLigKakomi{□:CL}  \\
+    \ajLigKakomi{□:D}   \\
+    \ajLigKakomi{□:E}   \\
+    \ajLigKakomi{□:F}   \\
+    \ajLigKakomi{□:KCL} \\
+    \ajLigKakomi{□:ゴ}  \\
+    \ajLigKakomi{□:ミ}  \\
+    \ajLigKakomi{□:段}  \\
+    \ajLigKakomi{□:終}  \\
+    \ajLigKakomi{■◇}  \\
+    \ajLigKakomi{△!}  \\
+    \ajLigKakomi{▽▽}  \\
+    \ajLigKakomi{▽〒} \\
+  \end{booktabular}}
+\end{center}
+
+\cmd{ajMaruKakuAlph\{14\}}（{\ibmfamily\ajMaruKakuAlph{14}}）と\cmd{ajLig\{◇News\}}（{\ibmfamily\ajLig{◇News}}）は見た目が変わらないグリフですが、これらは異なるグリフです。
+加えて、\texttt{CID+20504}（{\ibmfamily\CID{20504}}）は提供されていません。ただし、これは\cmd{ajMaruAlph\{8\}}（{\ibmfamily\ajMaruAlph{8}}）とは異なるグリフです。
+
+一部、U-Pressから導入されたグリフがあります。これらは{\Unicode}における私用領域に当てられていますが、PDF上では私用領域にマッピングされていないことに注意してください。
+次の46のグリフが対象です：｛{\ibmfamily\□{:A}, \□{:B}, \□{:C}, \□{:D}, \□{:E}, \□{:F}, \□{:終}, \□{:CL}, \□{:KCL}, \□{:BEL}, \□{:AS}, \□{:AM}, \□{:段}, \□{:ゴ}, \□{:ミ}, \○{年}, \◇{News}, \◇{天}, \◇{再}, \◇{新}, \◇{映}, \◇{声}, \◇{前}, \◇{後}, \◇{終}, \◇{立}, \◇{交}, \◇{ほか}, \◇{劇}, \◇{司}, \◇{解}, \◇{株}, \◇{気}, \◇{二}, \◇{多}, \◇{文}, \◇{手}, \◇{PV}, \◇{MV}, \◇{双}, \◇{SS}, \◇{S1}, \◇{S2}, \◇{S3}, \◇{デ}, \◇{HV}.}｝
+
+\newpage
+\section{コントロールシンボル}
+
+\pkg{ajmacros}では、囲み文字や合字を``コントロールシンボル''と呼ばれる方法で直接表現することが出来ます。
+基本形は\cmd{\textlrangle{記号}\textlrangle{文字}}とします。
+この\eghostguarded{\textlrangle{記号}}は囲み文字のための9種と仮名の濁音化・半濁音化、小書きのための3種があります。
+
+ここで利用される記号には類似した文字が多数あるため、以下の表を参考に記号に利用する文字に注意してください。
+
+\begin{center}
+  \begin{booktabular}{>{\ttfamily}C{5zw}C{10zw}}
+    \thead{\textlrangle{記号}} & \thead{{\Unicode}} \\
+    \midrule
+    ○            & \UCN{25CB}      \\
+    ●            & \UCN{25CF}      \\
+    □            & \UCN{25A1}      \\
+    ■            & \UCN{25A0}      \\
+    ◇            & \UCN{25C7}      \\
+    ◆            & \UCN{25C6}      \\
+  \end{booktabular}
+  \hfil
+  \begin{booktabular}{>{\ttfamily}C{5zw}C{10zw}}
+    \thead{\textlrangle{記号}} & \thead{{\Unicode}} \\
+    \midrule
+    （{\rmfamily,} ）       & \UCN{FF08}, \UCN{FF09} \\
+    △            & \UCN{25B3}      \\
+    ▽            & \UCN{25BD}      \\
+    ゛           & \UCN{309B}      \\
+    ゜           & \UCN{309C}      \\
+    ！           & \UCN{FF01}      \\
+  \end{booktabular}
+\end{center}
+
+実際には以下のように利用します。
+
+\begin{demosource}
+  {\textbackslash}○a、{\textbackslash}●B、{\textbackslash}□う、{\textbackslash}■ヱ、{\textbackslash}◇木、{\textbackslash}◆か、{\textbackslash}（問）\\
+  {\textbackslash}△!、{\textbackslash}゛\{\jpincmd{ワ}\}、{\textbackslash}゜\{\jpincmd{セ}\}、{\textbackslash}！\hspace{-0.4zw}\{\jpincmd{ヌ}\}
+  \tcblower
+  \ibmfamily
+  \○a、\●B、\□う、\■ヱ、\◇木、\◆か、\（問）\\
+  \△!、\゛{ワ}、\゜{セ}、\！{ヌ}
+\end{demosource}
+
+本ドキュメントは{\upLaTeX}で作成しているため仮名のコントロールシンボルでは波括弧で囲っていますが、{\pLaTeX}では囲わなくても同じ結果を得ることが出来ます。（\cmd{kcatcode}を変更することでも対応できます：\href{https://texwiki.texjp.org/?OTF#:~:text=uplatex%20%E3%81%A7%E5%87%A6%E7%90%86%E3%81%99%E3%82%8B%E5%A0%B4%E5%90%88%E3%81%AB%20%5Ckcatcode%60%E3%82%9C%3D18%20%E3%82%92%E8%BF%BD%E5%8A%A0%E3%81%97%E3%81%A6%E3%81%84%E3%81%BE%E3%81%99%E3%80%82%20%E3%81%93%E3%82%8C%E3%82%92%E8%BF%BD%E5%8A%A0%E3%81%97%E3%81%AA%E3%81%84%E5%A0%B4%E5%90%88%E3%81%AF%20uplatex%20%E3%81%A7%E3%82%A8%E3%83%A9%E3%83%BC%E3%81%8C%E7%99%BA%E7%94%9F%E3%81%97%E3%81%BE%E3%81%99%E3%80%82%20upTeX%20%E3%81%A7%E3%81%AE%20kcatcode%20%E3%81%AE%E6%97%A2%E5%AE%9A%E5%80%A4%E3%81%8C%20pTeX%20%E3%81%8B%E3%82%89%E5%A4%89%E6%9B%B4%E3%81%95%E3%82%8C%E3%81%A6%E3%81%84%E3%82%8B%E3%82%88%E3%81%86%E3%81%A7%E3%81%99%E3%80%82}{{\TeXWiki} -- OTF}）
+
+特に、複数文字の引数を採るコントロールシンボルの場合は波括弧で囲う必要があります。以下で示す\cmd{◇ほか}の例では波括弧で囲っていないため\cmd{◇ほ}と解釈されてしまっています。
+
+\begin{demosource}
+  {\textbackslash}◇ほか、{\textbackslash}◇\{\jpincmd{ほか}\}。\\
+  {\textbackslash}□:ゴ、{\textbackslash}□\{:ゴ\}。
+  \% \warichu{\rmfamily\cmd{□:}{\inhibitkanjiskip}\,に相当するグリフは存在しないがエラーにならない}
+  \\
+  {\textbackslash}◇News、{\textbackslash}◇\{News\}。
+  \tcblower
+  \ibmfamily
+  \◇ほか、\◇{ほか}。\\
+  \□:ゴ、\□{:ゴ}。\\
+  \◇News、\◇{News}。
+\end{demosource}
+
+仮名を濁音化・半濁音化する場合、\cmd{ajLig}で提供される引数と同じように、任意のすべての仮名の濁音化・半濁音化、小書きを表現できるわけではありません。以下の表の通り、取りうる引数は{\Unicode}にあるが{\ShiftJIS}に含まれない文字に限られます。
+
+\begin{center}
+  \begin{booktabular}{cl}
+    \thead{濁点}   & うワヰヱヲ \\
+    \thead{半濁点} & かきくけこカキクケコセツト \\
+    \thead{小書き} & かけこクコシストハヒフヘホヌプムラリルレロ \\
+  \end{booktabular}
+\end{center}
+
+そのため、例えば「あ」に濁点を与えた文字を期待して\cmd{゛\!\{\jpincmd{あ}\}}としても何も出力されません。（濁点・半濁点の結合文字を利用したとしても、NFC正規化が行われるため存在しないグリフを参照することとなり、やはり何も出力されません）
+
+\newpage
+\section{\texorpdfstring{\pkg{otf}}{otfパッケージ}から提供されるコマンド}
+
+\pkg{ajmacros}ではなく\pkg{otf}から提供されている記号用コマンドがあります。
+これらには、すでに示した\cmd{ajArrow}、\cmd{ajPICT}、\cmd{ajLig}から提供されているコマンドと同様のコマンドが別名で定義されているものも多くあります。
+
+ここでは、すでに示されたコマンド名を並記する形でも\pkg{otf}から提供されるコマンドを紹介します。
+
+\subsection{矢印}
+
+\begin{center}
+  \begin{booktabular}{>{\ibmfamily}lp{10zw}*{2}{p{13zw}}>{\ibmfamily}l}
+    \ajUpBArrow        & \cmd{ajUpBArrow}       & \cmd{ajArrow\{UP*\}}            & --                         & \ajUpBArrow        \\
+    \ajDownBArrow      & \cmd{ajDownBArrow}     & \cmd{ajArrow\{DOWN*\}}          & --                         & \ajDownBArrow      \\
+    \ajRightBArrow     & \cmd{ajRightBArrow}    & \cmd{ajArrow\{RIGHT*\}}         & --                         & \ajRightBArrow     \\
+    \ajLeftBArrow      & \cmd{ajLeftBArrow}     & \cmd{ajArrow\{LEFT*\}}          & --                         & \ajLeftBArrow      \\
+    \ajUpWArrow        & \cmd{ajUpWArrow}       & \cmd{ajArrow\{Up\}}             & \cmd{ajArrowUp}            & \ajUpWArrow        \\
+    \ajDownWArrow      & \cmd{ajDownWArrow}     & \cmd{ajArrow\{Down\}}           & \cmd{ajArrowDown}          & \ajDownWArrow      \\
+    \ajRightWArrow     & \cmd{ajRightWArrow}    & \cmd{ajArrow\{Right\}}          & \cmd{ajArrowRight}         & \ajRightWArrow     \\
+    \ajLeftWArrow      & \cmd{ajLeftWArrow}     & \cmd{ajArrow\{Left\}}           & \cmd{ajArrowLeft}          & \ajLeftWArrow      \\
+    \ajLeftUpArrow     & \cmd{ajLeftUpArrow}    & \cmd{ajArrow\{LeftUp\}}         & \cmd{ajArrowLeftUp}        & \ajLeftUpArrow     \\
+    \ajRightUpArrow    & \cmd{ajRightUpArrow}   & \cmd{ajArrow\{RightUp\}}        & \cmd{ajArrowRightUp}       & \ajRightUpArrow    \\
+    \ajRightDownArrow  & \cmd{ajRightDownArrow} & \cmd{ajArrow\{RightDown\}}      & \cmd{ajArrowRightDown}     & \ajRightDownArrow  \\
+    \ajLeftDownArrow   & \cmd{ajLeftDownArrow}  & \cmd{ajArrow\{LeftDown\}}       & \cmd{ajArrowLeftDown}      & \ajLeftDownArrow   \\
+    \ajUpScissors      & \cmd{ajUpScissors}     & \cmd{ajArrow\{UpScissors\}}     & \cmd{ajArrowUpScissors}    & \ajUpScissors      \\
+    \ajDownScissors    & \cmd{ajDownScissors}   & \cmd{ajArrow\{DownScissors\}}   & \cmd{ajArrowDownScissors}  & \ajDownScissors    \\
+    \ajRightScissors   & \cmd{ajRightScissors}  & \cmd{ajArrow\{RightScissors\}}  & \cmd{ajArrowRightScissors} & \ajRightScissors   \\
+    \ajLeftScissors    & \cmd{ajLeftScissors}   & \cmd{ajArrow\{LeftScissors\}}   & \cmd{ajArrowLeftScissors}  & \ajLeftScissors    \\
+  \end{booktabular}
+\end{center}
+
+手で方向を指定するグリフは\cmd{ajArrow}と\cmd{aPICT}の両方があります。
+
+\begin{center}
+  \begin{booktabular}{>{\ibmfamily}lp{10zw}*{2}{p{13zw}}>{\ibmfamily}l}
+    \ajUpHand          & \cmd{ajUpHand}         & \cmd{ajArrow\{UpHand\}}         & \cmd{ajArrowUpHand}        & \ajUpHand          \\
+                       &                        & \cmd{ajPICT\{↑\}}               & \cmd{ajPICT↑}              &                    \\
+    \ajDownHand        & \cmd{ajDownHand}       & \cmd{ajArrow\{DownHand\}}       & \cmd{ajArrowDownHand}      & \ajDownHand        \\
+                       &                        & \cmd{ajPICT\{↓\}}               & \cmd{ajPICT↓}              &                    \\
+    \ajRightHand       & \cmd{ajRightHand}      & \cmd{ajArrow\{RightHand\}}      & \cmd{ajArrowRightHand}     & \ajRightHand       \\
+                       &                        & \cmd{ajPICT\{→\}}               & \cmd{ajPICT→}              &                    \\
+    \ajLeftHand        & \cmd{ajLeftHand}       & \cmd{ajArrow\{LeftHand\}}       & \cmd{ajArrowLeftHand}      & \ajLeftHand        \\
+                       &                        & \cmd{ajPICT\{←\}}               & \cmd{ajPICT←}              &                    \\
+  \end{booktabular}
+\end{center}
+
+\subsection{ピクチャー記号}
+
+\begin{center}
+  \begin{booktabular}{>{\ibmfamily}l*{3}{p{12zw}}>{\ibmfamily}l}
+    \ajClub          & \cmd{ajClub}           & \cmd{ajPICT\{Club*\}}          & --                          & \ajClub          \\
+    \ajvarClub       & \cmd{ajvarClub}        & \cmd{ajPICT\{Club\}}           & \cmd{ajPICTClub}            & \ajvarClub       \\
+    \ajSpade         & \cmd{ajSpade}          & \cmd{ajPICT\{Spade*\}}         & --                          & \ajSpade         \\
+    \ajvarSpade      & \cmd{ajvarSpade}       & \cmd{ajPICT\{Spade\}}          & \cmd{ajPICTSpade}           & \ajvarSpade      \\
+    \ajvarHeart      & \cmd{ajvarHeart}       & \cmd{ajPICT\{Heart*\}}         & --                          & \ajvarHeart      \\
+    \ajHeart         & \cmd{ajHeart}          & \cmd{ajPICT\{Heart\}}          & \cmd{ajPICTHeart}           & \ajHeart         \\
+    \ajvarDiamond    & \cmd{ajvarDiamond}     & \cmd{ajPICT\{Diamond*\}}       & --                          & \ajvarDiamond    \\
+    \ajDiamond       & \cmd{ajDiamond}        & \cmd{ajPICT\{Diamond\}}        & \cmd{ajPICTDiamond}         & \ajDiamond       \\
+    \ajBlackFlorette & \cmd{ajBlackFlorette}  & \cmd{ajPICT\{\jpincmd{花}*\}}  & --                          & \ajBlackFlorette \\
+    \ajWhiteFlorette & \cmd{ajWhiteFlorette}  & \cmd{ajPICT\{\jpincmd{花}\}}   & \cmd{ajPICT\jpincmd*{花}}   & \ajWhiteFlorette \\
+    \ajPostal        & \cmd{ajPostal}         & \cmd{ajPICT\{〒\}}             & \cmd{ajPICT{\inhibitkanjiskip}〒} & \ajPostal        \\
+    \ajvarPostal     & \cmd{ajvarPostal}      & --                             & --                          & \ajvarPostal     \\
+    \ajPhone         & \cmd{ajPhone}          & \cmd{ajPICT\{\jpincmd{電話}\}} & \cmd{ajPICT\jpincmd*{電話}} & \ajPhone         \\
+    \ajSun           & \cmd{ajSun}            & \cmd{ajPICT\{\jpincmd{晴}\}}   & \cmd{ajPICT\jpincmd*{晴}}   & \ajSun           \\
+    \ajCloud         & \cmd{ajCloud}          & \cmd{ajPICT\{\jpincmd{曇}\}}   & \cmd{ajPICT\jpincmd*{曇}}   & \ajCloud         \\
+    \ajUmbrella      & \cmd{ajUmbrella}       & \cmd{ajPICT\{\jpincmd{雨}\}}   & \cmd{ajPICT\jpincmd*{雨}}   & \ajUmbrella      \\
+    \ajSnowman       & \cmd{ajSnowman}        & \cmd{ajPICT\{\jpincmd{雪}\}}   & \cmd{ajPICT\jpincmd*{雪}}   & \ajSnowman       \\
+    \ajBall          & \cmd{ajBall}           & \cmd{ajPICT\{\jpincmd{野球}\}} & \cmd{ajPICT\jpincmd*{野球}} & \ajBall          \\
+    \ajHotSpring     & \cmd{ajHotSpring}      & \cmd{ajPICT\{\jpincmd{温泉}\}} & \cmd{ajPICT\jpincmd*{温泉}} & \ajHotSpring     \\
+  \end{booktabular}
+\end{center}
+
+\vfil
+
+\subsection{和文合字}
+
+\begin{center}
+  \begin{booktabular}{l*{2}{p{13zw}}l}
+    \ajMasu            & \cmd{ajMasu}        & \cmd{ajLig\{\jpincmd*{升}\}}   & \ajMasu            \\
+    \ajYori            & \cmd{ajYori}        & \cmd{ajLig\{\jpincmd*{より}\}} & \ajYori            \\
+    \ajKoto            & \cmd{ajKoto}        & \cmd{ajLig\{\jpincmd*{コト}\}} & \ajKoto            \\
+    \ajUta             & \cmd{ajUta}         & --                             & \ajUta             \\
+    \ajBlackSesame     & \cmd{ajBlackSesame} & --                             & \ajBlackSesame     \\
+    \ajWhiteSesame     & \cmd{ajWhiteSesame} & --                             & \ajWhiteSesame     \\
+    \ajJIS             & \cmd{ajJIS}         & \cmd{ajLig\{JIS\}}             & \ajJIS             \\
+    {\ibmfamily\ajJAS} & \cmd{ajJAS}         & \cmd{ajLig\{JAS\}}             & {\ibmfamily\ajJAS} \\
+  \end{booktabular}
+\end{center}
+
+\newpage
+\subsection{踊り字}
+
+以下の踊り字は縦書きのみで利用できます。ただし、くの字点は\UCN{3031}、\UCN{3032}のような1字ではなく、\UCN{3033}または\UCN{3034}と\UCN{3035}を組み合わせたものを使用しています。
+
+\begin{center}
+  \begin{booktabular}{p{10zw}c}
+    \raisebox{0.5zw}{\cmd{ajKunoji}}         & \raisebox{-0.2zw}{\pbox<t>{\ajKunoji}}         \\[0.3zw]
+    \raisebox{0.5zw}{\cmd{ajKunojiwithBou}}  & \raisebox{-0.2zw}{\pbox<t>{\ajKunojiwithBou}}  \\[0.3zw]
+    \raisebox{0.5zw}{\cmd{ajDKunoji}}        & \raisebox{-0.2zw}{\pbox<t>{\ajDKunoji}}        \\[0.3zw]
+    \raisebox{0.5zw}{\cmd{ajDKunojiwithBou}} & \raisebox{-0.2zw}{\pbox<t>{\ajDKunojiwithBou}} \\
+  \end{booktabular}
+  \hfil
+  \begin{booktabular}{p{10zw}c}
+    \cmd{ajNinoji}         & \raisebox{-0.2zw}{\pbox<t>{\ajNinoji}}              \\
+    \cmd{ajvarNinoji}      & \raisebox{-0.2zw}{\ibmfamily\pbox<t>{\ajvarNinoji}} \\
+    \cmd{ajYusuriten}      & \raisebox{-0.2zw}{\ibmfamily\pbox<t>{\ajYusuriten}} \\
+  \end{booktabular}
+\end{center}
+
+黒ゴマ傍点付きのくの字点(\cmd{aj(D)KunojiwithBou})を利用するには\pkg{plext}が必須です。これは内部で\pkg{plext}から提供される\cmd{bou}を利用して黒ゴマ(\cmd{ajBlackSesame})を与えているためです。\warichu*{エラーの際に\pkg{plext}が必要な旨のメッセージはありませんが、&\cmd{bou}を定義しているパッケージは\pkg{plext}のみです}
+
+これを踏まえると、\cmd{boutenchar}を再定義することで黒ゴマ傍点から白ゴマ傍点に変更することも可能です。
+
+\begin{demosource}*[0.2]
+  {\textbackslash}ajKunojiwithBou%
+  {\textbackslash}ajDKunojiwithBou\\
+  \vfil
+  {\textbackslash}renewcommand\{{\textbackslash}boutenchar\}\{{\textbackslash}hbox to 1zw\{{\textbackslash}tate{\textbackslash}hfil{\textbackslash}tiny{\textbackslash}ajWhiteSesame\}\}\\
+  \vfil
+  {\textbackslash}ajKunojiwithBou%
+  {\textbackslash}ajDKunojiwithBou
+  \tcblower
+  \pbox<t>{\ajKunojiwithBou}
+  \hspace{1zw}
+  \pbox<t>{\ajDKunojiwithBou}
+
+  \vspace{-0.6zw}
+  {\color{gray9}\rule{\linewidth}{0.15zw}}\\[-1zw]
+  {\scriptsize (\cmd{boutenchar}の再定義)}\\[-1.3zw]
+  {\color{gray9}\rule{\linewidth}{0.15zw}}
+  \vspace{-1zw}
+
+  \renewcommand{\boutenchar}{\hbox to 1zw{\tate\hfil\tiny\ajWhiteSesame}}%
+
+  \pbox<t>{\ajKunojiwithBou}
+  \hspace{1zw}
+  \pbox<t>{\ajDKunojiwithBou}
+\end{demosource}
+
+\vfil
+
+\subsection{その他}
+
+\begin{center}
+  \begin{booktabular}{p{10zw}>{\ibmfamily}c}
+    \cmd{ajSenteMark}    & \ajSenteMark     \\
+    \cmd{ajGoteMark}     & \ajGoteMark      \\
+    \cmd{ajCheckmark}    & \ajCheckmark     \\
+    \cmd{ajVisibleSpace} & \ajVisibleSpace  \\
+    \cmd{ajCommandKey}   & \ajCommandKey    \\
+    \cmd{ajReturnKey}    & \ajReturnKey     \\
+  \end{booktabular}
+\end{center}
+
+\newpage
+\section{リーダー：\texorpdfstring{\cmd{ajLeader}}{\textbackslash ajLeader}}
+
+区切り線等のリーダーを記述するための\cmd{ajLeader}があります。そのままでは\cmd{hfill}のように文字で行末まで埋めますが、オプション引数で\eghostguarded{\textlrangle{dim}}を指定することでその幅で出力することも出来ます。
+
+\begin{demosource}
+  ここから{\textbackslash}ajLeader\{2\}ここまで\\
+  ここから{\textbackslash}ajLeader[3zw]\{3\}ここまで
+  \tcblower
+  \ibmfamily
+  ここから
+  \ajLeader{2}%
+  ここまで\\
+  ここから
+  \ajLeader[3zw]{3}%
+  ここまで
+\end{demosource}
+
+\begin{center}
+  \begin{booktabular}{>{\ttfamily}c>{\ibmfamily}p{10zw}}
+    \thead{引数} & \thead{サンプル} \\
+    \midrule
+    1  & \makebox[10zw]{\ajLeader[10zw]{1}}    \\
+    2  & \makebox[10zw]{\ajLeader[10zw]{2}}    \\
+    3  & \makebox[10zw]{\ajLeader[10zw]{3}}    \\
+  \end{booktabular}
+  \hfil
+  \begin{booktabular}{>{\ttfamily}c>{\ibmfamily}p{10zw}}
+    \thead{引数} & \thead{サンプル} \\
+    \midrule
+    4  & \makebox[10zw]{\ajLeader[10zw]{4}}    \\
+    5  & \makebox[10zw]{\ajLeader[10zw]{5}}    \\
+    6  & \makebox[10zw]{\ajLeader[10zw]{6}}    \\
+  \end{booktabular}
+\end{center}
+
+6を超える値を与えると、例えば\cmd{ajLeader\{7\}}では{\ibmfamily\ajLeader[4.6zw]{7}}のような記号が連続するようになります。ただし、横組と縦組で記号が異なるようになります。\warichu{本ドキュメントではリーダーとして利用されるのは6までだろうと判断しています}
+
+\section{括弧：\texorpdfstring{\cmd{ajQuote}}{\textbackslash ajQuote}}
+
+\cmd{ajQuote}を利用することで、簡単にその値に応じた括弧を出力できます。
+
+\begin{demosource}
+  {\textbackslash}ajQuote\{11\}\{朗報\}
+  \tcblower
+  \ajQuote{11}{朗報}
+\end{demosource}
+
+デフォルトでは以下の表の通りの値と括弧になります。19以上の数値を与えるとエラーとなります。
+
+\newcommand{\ajQuoteS}[1]{#1 & \ibmfamily\ajQuote{#1}{○} & \raisebox{0pt}{\parbox<t>{3zw}{\ibmfamily\ajQuote{#1}{○}}}}
+\newcommand{\breakcell}[1]{\setlength{\tabcolsep}{0pt}\hspace{-\tabcolsep}\( \Bigl\{\begin{tabular}{l} #1 \end{tabular} \)}
+
+\begin{center}
+  \begin{booktabular}{>{\ttfamily}cccp{10zw}}
+    \thead{値} & \thead{横組} & \thead{縦組} & \thead{括弧種} \\
+    \midrule
+    \ajQuoteS{1}  & \breakcell{\scriptsize 横：シングルクォート\\[-0.55zw]\scriptsize 縦：シングルミニュート} \\[-0.5zw]
+    \ajQuoteS{2}  & \breakcell{\scriptsize 横：ダブルクォート\\[-0.55zw]\scriptsize 縦：ダブルミニュート} \\[-0.5zw]
+    \ajQuoteS{3}  & 丸括弧 \\[-0.5zw]
+    \ajQuoteS{4}  & 亀甲括弧 \\[-0.5zw]
+    \ajQuoteS{5}  & 角括弧 \\[-0.5zw]
+    \ajQuoteS{6}  & 波括弧 \\[-0.5zw]
+    \ajQuoteS{7}  & 山括弧 \\[-0.5zw]
+    \ajQuoteS{8}  & 二重山括弧 \\[-0.5zw]
+    \ajQuoteS{9}  & かぎ括弧 \\[-0.5zw]
+  \end{booktabular}
+  \hfil
+  \begin{booktabular}{>{\ttfamily}cccp{10zw}}
+    \thead{値} & \thead{横組} & \thead{縦組} & \thead{括弧種} \\
+    \midrule
+    \ajQuoteS{10} & 二重かぎ括弧 \\[-0.5zw]
+    \ajQuoteS{11} & 隅付き括弧 \\[-0.5zw]
+    \ajQuoteS{12} & ダブルミニュート \\[-0.5zw]
+    \ajQuoteS{13} & 二重かぎ括弧 \\[-0.5zw]
+    \ajQuoteS{14} & 二重角括弧 \\[-0.5zw]
+    \ajQuoteS{15} & 二重亀甲括弧 \\[-0.5zw]
+    \ajQuoteS{16} & 二重丸括弧 \\[-0.5zw]
+    \ajQuoteS{17} & シングルミニュート \\[-0.5zw]
+    \ajQuoteS{18} & 白隅付き括弧 \\[-0.5zw]
+  \end{booktabular}
+\end{center}
+
+縦組の\cmd{ajQuote\{1\}}や\cmd{ajQuote\{2\}}がミニュートになるのは\pkg{otf}のフォントメトリックとは独立しています。そのため、\cls{jlreq}等の他のフォントメトリックを利用している場合であっても縦組の際にはミニュートになります。
+
+\newpage
+\section{漢文：\texorpdfstring{\cmd{ajKunten}}{\textbackslash ajKunten}}
+
+漢文で使用される訓点には、ふつうに入力される文字とは異なる特別な文字があります。これらの組はほとんど見分けが付きませんが別の文字になっています。
+また、「\ajKunten{一}\subUCN{3192}」と「\ajKunten{レ}\subUCN{3191}」を繋げた一レ点のようなものもあります。
+これらの訓点は\cmd{ajKunten\{\textlrangle{引数}\}}を利用して表現します。
+
+\newcommand{\ajKuntenS}[3]{#2 {\rmfamily\normalsize\subUCN{#1}} & \ajKunten{#2} \subUCN{#3}}
+
+\begin{center}
+  \begin{booktabular}{>{\ttfamily\small}C{5zw}C{5zw}}
+    \thead{引数} & \thead{訓点} \\
+    \midrule
+    \ajKuntenS{30EC}{レ}{3191} \\
+    \ajKuntenS{4E00}{一}{3192} \\
+    \ajKuntenS{4E8C}{二}{3193} \\
+    \ajKuntenS{4E09}{三}{3194} \\
+    \ajKuntenS{56DB}{四}{3195} \\
+    \ajKuntenS{4E0A}{上}{3196} \\
+    \ajKuntenS{4E2D}{中}{3197} \\
+    \ajKuntenS{4E0B}{下}{3198} \\
+  \end{booktabular}
+  \hfil
+  \begin{booktabular}{>{\ttfamily\small}C{5zw}C{5zw}}
+    \thead{引数} & \thead{訓点} \\
+    \midrule
+    \ajKuntenS{7532}{甲}{3199} \\
+    \ajKuntenS{4E59}{乙}{319A} \\
+    \ajKuntenS{4E19}{丙}{319B} \\
+    \ajKuntenS{4E01}{丁}{319C} \\
+    \ajKuntenS{5929}{天}{319D} \\
+    \ajKuntenS{5730}{地}{319E} \\
+    \ajKuntenS{4EBA}{人}{319F} \\
+  \end{booktabular}
+  \hfil
+  \begin{booktabular}{>{\ttfamily\small}C{5zw}C{5zw}}
+    \thead{引数} & \thead{訓点} \\
+    \midrule
+    一レ & \large\raisebox{-0.2zw}{\ajKunten{一レ}} \\[1zw]
+    上レ & \large\raisebox{-0.5zw}{\ajKunten{上レ}} \\[1zw]
+    甲レ & \large\raisebox{-0.5zw}{\ajKunten{甲レ}} \\[1zw]
+    天レ & \large\raisebox{-0.5zw}{\ajKunten{天レ}} \\
+  \end{booktabular}
+\end{center}
+
+以上19の訓点の記法には、\cmd{aj\jpincmd*{訓点レ}}や\cmd{aj\jpincmd*{訓点上レ}}のように\cmd{aj\jpincmd*{訓点}\textlrangle{引数}}とするコマンドも提供されています。
+
+これらに加えて、「｜\subUCN{FF5C}」を利用して\cmd{ajKunten\{｜\}}とすることで\ruby{竪点}{たて|てん}（連字符号）「\ajKunten{｜}\subUCN{3190}」も表現できます。
+また、竪点と返り点を組み合わせた訓点も表現できます。
+
+\newcommand{\ajKuntenVS}[1]{#1 & \ajKunten{#1}}
+
+\begin{center}
+  \begin{booktabular}{>{\ttfamily\small}C{3zw}C{3zw}}
+    \thead{引数} & \thead{訓点} \\
+    \midrule
+    \ajKuntenVS{二｜} \\
+    \ajKuntenVS{三｜} \\
+    \ajKuntenVS{四｜} \\
+    \ajKuntenVS{中｜} \\
+    \ajKuntenVS{下｜} \\
+  \end{booktabular}
+  \hfil
+  \begin{booktabular}{>{\ttfamily\small}C{3zw}C{3zw}}
+    \thead{引数} & \thead{訓点} \\
+    \midrule
+    \ajKuntenVS{乙｜} \\
+    \ajKuntenVS{丙｜} \\
+    \ajKuntenVS{丁｜} \\
+    \ajKuntenVS{地｜} \\
+    \ajKuntenVS{人｜} \\
+  \end{booktabular}
+  \hfil
+  \begin{booktabular}{>{\ttfamily\small}C{3zw}C{3zw}}
+    \thead{引数} & \thead{訓点} \\
+    \midrule
+    \ajKuntenVS{｜二} \\
+    \ajKuntenVS{｜三} \\
+    \ajKuntenVS{｜四} \\
+    \ajKuntenVS{｜中} \\
+    \ajKuntenVS{｜下} \\
+  \end{booktabular}
+  \hfil
+  \begin{booktabular}{>{\ttfamily\small}C{3zw}C{3zw}}
+    \thead{引数} & \thead{訓点} \\
+    \midrule
+    \ajKuntenVS{｜乙} \\
+    \ajKuntenVS{｜丙} \\
+    \ajKuntenVS{｜丁} \\
+    \ajKuntenVS{｜地} \\
+    \ajKuntenVS{｜人} \\
+  \end{booktabular}
+\end{center}
+
+最後に、\pkg{gckanbun}による例を紹介します。このパッケージでは\cmd{gckanbunkaeriten}によって訓点を表すので、次のように別に定義すると簡便になります。
+
+\begin{demosource}*[0.1]
+  {\textbackslash}newcommand\{{\textbackslash}Kunten\}[1]\{{\textbackslash}gckanbunkaeriten\{{\textbackslash}ajKunten\{\#1\}\}\}\\
+  \vfil
+  有{\textbackslash}Kunten\{\jpincmd{下}\}%
+  鬻{\textbackslash}Kunten\{\jpincmd{二}\}%
+  盾与{\textbackslash}Kunten\{\jpincmd{一レ}\}%
+  矛者{\textbackslash}Kunten\{\jpincmd{上}\}%
+  \tcblower
+  \newcommand{\Kunten}[1]{\gckanbunkaeriten{\ajKunten{#1}}}
+  \LARGE
+  \pbox<t>{ 有\Kunten{下}鬻\Kunten{二}盾与\Kunten{一レ}矛者\Kunten{上} }
+\end{demosource}
+
+\subsection{\texorpdfstring{\filePath{sfkanbun.sty}}{sfkanbun.sty}、\texorpdfstring{\filePath{kunten2e.sty}}{kunten2e.sty}との連携}
+
+漢文に関する{\pLaTeX}向けパッケージとして\filePath{sfkanbun.sty}と\filePath{kunten2e.sty}があります。これらのパッケージでは、レ点や踊り字がフォントに収録されていないことを受けて、（今からするとかなり強引な）代替方法が提供されています。
+
+\pkg{otf}では、以下の2つのコマンドによって漢文における返り点等のコマンド
+（\begin{itemize*}[label={}, afterlabel={}, itemjoin=、]
+  \item \cmd{kundokusize}
+  \item \cmd{kaeriten\{\textlrangle{返り点}\}}
+  \item \cmd{kokana\{\textlrangle{仮名}\}\{\textlrangle{返り点}\}}
+  \item \cmd{reten}
+  \item \cmd{retenform}
+  \item \cmd{retenkana\{\textlrangle{レ点付き仮名・仮名}\}}
+\end{itemize*}）
+のスタイルを{\AdobeJapan}にあるグリフ変更するためのコマンドを提供します。
+
+\begin{itemize}
+  \item \cmd{DeclareOriginalKundokuStyle}
+  \item \cmd{DeclareAJKundokuStyle}
+\end{itemize}
+
+これらのコマンドは以上で示しているパッケージを前提としたものになっているため、2025年現在では有用なコマンドとは言い難い状況となっています。
+
+\vfil
+
+ここでは最後に2つのパッケージに関する情報を以下に示します。\warichu{2つともライセンス周りが明示されていないため、本リポジトリでの再配布は避けています}
+
+\begin{itemize}
+  \item {\large\filePath{sfkanbun.sty}}（\ruby{藤田}{ふじ|た}\ruby{眞作}{しん|さく}{\氏}）
+
+  パッケージは以下のページから取得できます。\warichu*{ただし、\filePath{sfkanbun.sty}は内部で&\filePath{jdkintou.sty}が必要になります}
+
+  {\noindent}TeX/LaTeX Applications by Shinsaku Fujita - Fujita Shinsaku TeX/LaTeX Page
+  \urltab{\url{http://xymtex.com/fujitas2/texlatex/index.html}}
+
+  ただし、これに関するマニュアルはありません。ソース内にある程度の解説があるため、これを読めば凡そ使えるようになります。
+  \vspace{1zw}
+  \item {\large\filePath{kunten2e.sty}}（\ruby{金水}{きん|すい}\ruby{敏}{さとし}{\氏}）
+
+  パッケージは以下の大阪大学のページから配布されていましたが、2025年10月現在、アクセスすることは出来ずパッケージを取得できません。\warichu{2022年度末に大阪大学を退職されているので、それに伴ってページが削除された？}
+  \urltab[network-off]{\url{http://www.let.osaka-u.ac.jp/~kinsui/tex/top.htm}}
+
+  \filePath{kunten2e.sty}を取得する代替として、Wayback Machineを利用する方法があります。ここから\filePath{kunten2e.sty}ファイルとパッケージの解説PDF「kunten2e.styについて」(\filePath{kunkai.pdf})を取得できます。
+  \urltab{\url{https://web.archive.org/web/20220210173434/http://www.let.osaka-u.ac.jp/~kinsui/tex/top.htm}}
+  \vspaceLine
+
+  \filePath{kunkai.pdf}はマニュアルに相当しますが、公開されているバージョン2.0の完全なマニュアルとはなっていません。
+\end{itemize}
+
+ただし、これらのパッケージはそれなりに古く、仮に今すべてのパッケージを取得できたとしても今の{\LaTeX}で動作する保証がないことに注意してください。
+
+特に、\filePath{sfkanbun.sty}に関しては\href{https://okumuralab.org/tex/mod/forum/discuss.php?d=2661}{{\TeX} Forum \#\textsf{2661}}を参照してください。2018年12月以降の{\LaTeX}で生じる問題を修正する方法と修正済みのファイルを取得できます。
+
+\end{document}

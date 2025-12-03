@@ -1,0 +1,20 @@
+\documentclass[../supplement]{subfiles}
+\begin{document}
+
+
+\section{\LuaTeX -ja における対応}
+
+\LuaTeX -jaでも同様に\pkg{otf}と同等の機能が提供されています。ただし、これらの機能は1つのパッケージではなく、複数のパッケージから提供されています。
+
+\begin{description}[font=\sffamily, itemindent=-8zw, leftmargin=10zw]
+  \item[luatexja-otf] \tabto{0pt}\cmd{UTF}・\cmd{CID}の提供\\
+    \pkg{luatexja-ajmacros}も自動的に読み込まれる
+  \item[luatexja-preset] \tabto{0pt}\opt{deluxe}、\opt{expert}、\opt{bold}、\opt{jis2004}（その逆の\opt{jis90}）の機能提供
+    \sidenote{機能的にはこれらに加えて\pkg*{pxchfon}も取り込んだような形となっています。}
+\end{description}
+
+
+
+
+
+\end{document}

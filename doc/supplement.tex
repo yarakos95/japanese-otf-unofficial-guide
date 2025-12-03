@@ -1,0 +1,56 @@
+\RequirePackage{plautopatch}
+\documentclass[uplatex, dvipdfmx, paper=b5paper, jis2004,
+    jafontsize = 9pt,
+    % jafontscale = 1,
+    fore-edge=15zw,
+    line_length=35zw,
+    sidenote_length=13zw,
+    number_of_lines=35
+  ]{jlreq}
+\jlreqsetup{
+    quote_fontsize=small,
+    quote_beforeafter_space=0.8\baselineskip,
+    quote_indent=1.5zw,
+    quote_end_indent=1.5zw,
+    caption_font=\normalsize\gtfamily\mdseries,
+    caption_label_font=\normalsize\gtfamily\mdseries,
+  }
+
+\input{setup-supplement.tex}
+
+\title{\pkg*{japanese-otf}に関する追加の情報}
+\author{やらかしの貴公子}
+\date{\today：草稿}
+
+\begin{document}
+\savegeometry{body}
+\newgeometry{textwidth=350pt,marginparwidth=0pt,top=3zw,bottom=3zw}
+
+\pagestyle{cover}
+\maketitle
+
+\begin{abstract}
+  \pkg*{japanese-otf}における周辺知識お役立ち情報、周辺パッケージとの連携に関する情報を紹介します。
+\end{abstract}
+
+{
+% \begin{multicols*}{2}
+  \small
+  \tableofcontents
+% \end{multicols*}
+}
+
+\clearpage
+\loadgeometry{body}
+\setcounter{page}{1}
+\pagestyle{plain}
+
+\subfile{sub/knowledge.tex}
+
+\subfile{sub/IVS.tex}
+
+\subfile{sub/otherpkg.tex}
+
+\subfile{sub/luatexjaotf.tex}
+
+\end{document}
