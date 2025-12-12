@@ -27,7 +27,9 @@ latexmk を介して自動的に <samp>otf-unofficial-guide.pdf</samp> と <samp
 
 また、余剰ファイルは自動的に削除されます。
 
-ただし、IBM Plex Sans JP フォントを使用するためいくつかのセットアップが必要です。
+オプションとして、`otf` を与えると <samp>otf-unofficial-guide.tex</samp> のみ、`ajmacros` を与えると <samp>ajmacros-unofficial-guide.tex</samp> のみを生成します。
+
+ただし、タイプセットには IBM Plex Sans JP フォントを使用するためいくつかのセットアップが必要です。
 
 ## ここは間違いでは…？
 
