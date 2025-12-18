@@ -143,7 +143,7 @@
 \sidenote{\cmd{UTFM}はsubfont方式、2書体となっているため、\opt{deluxe}の影響を受けません。この問題に関しては\icon{github}\href{https://github.com/texjporg/japanese-otf-mirror/issues/31}{\textsf{texjporg/{\allowbreak}japanese-{\allowbreak}otf-{\allowbreak}mirror} \#31}でこの方式の変更提起がなされています。}
 
 
-他方で、\cmd{CID}のバリエーションコマンドに入力するCID値は、それぞれのスクリプトのものに依存します。そのため、{\fantizi}は``{\ptmfamily Adobe-CNS1-7}''、{\jiantizi}は``{\ptmfamily Adobe-GB1-5}''、{\hankgo}は``{\ptmfamily Adobe-Korean1-2}'' \sidenote{{\hankgo}のROSにはAdobe-KR-9もあります。このROSは最終更新が1998年のAdobe-Korean1-2よりも新しいROSですが、\pkg*{japanese-otf}ではAdobe-Korean1-2であることに注意してください。}
+他方で、\cmd{CID}のバリエーションコマンドに入力するCID値は、それぞれのスクリプトのものに依存します。そのため、{\fantizi}は``{\ptmfamily Adobe-CNS1-7}''、{\jiantizi}は``{\ptmfamily Adobe-GB1-5}''、{\hankgo}は``{\ptmfamily Adobe-Korea1-2}'' \sidenote{{\hankgo}のROSにはAdobe-KR-9もあります。このROSは最終更新が1998年のAdobe-Korea1-2よりも新しいROSですが、\pkg*{japanese-otf}ではAdobe-Korea1-2であることに注意してください。}
 です。
 そのため、{\AdobeJapan}とはCID値がまったく異なることに注意してください。
 
@@ -151,10 +151,13 @@
 
 \begin{itemize}
   \item Adobe-CNS1: The Adobe-CNS1-7 Character Collection
+    \\\icon{pdf}\filePath{Adobe-CNS1-7.pdf}
     \urltab[github]{\url{https://github.com/adobe-type-tools/Adobe-CNS1}}
   \item Adobe-GB1: The Adobe-GB1-6 Character Collection
+    \\\icon{pdf}\filePath{Adobe-GB1-6.pdf}
     \urltab[github]{\url{https://github.com/adobe-type-tools/Adobe-GB1}}
   \item Adobe-KR: The Adobe-KR-9 Character Collection
+    \\\icon{pdf}\filePath{5093.Adobe-Korea1-2.pdf}
     \urltab[github]{\url{https://github.com/adobe-type-tools/Adobe-KR}}
 \end{itemize}
 
