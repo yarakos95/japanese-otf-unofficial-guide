@@ -93,7 +93,15 @@
 \begin{itemize}
   \item フォーマット   \tabto{8zw}\pLaTeX
   \item {\TeX}エンジン \tabto{8zw}\pLaTeX、\upLaTeX
-  \item DVIウェア      \tabto{8zw}\terminalCMD{dviout}、\terminalCMD{Mxdvi}、\terminalCMD{xdvi}、および\terminalCMD{dvips}、\terminalCMD{udvips}、{\dvipdfmx}
+  \item DVIウェア      \tabto{8zw}
+  %% https://github.com/yarakos95/japanese-otf-unofficial-guide/issues/2
+  %% \terminalCMD{dviout}、% CID直接参照、vfのフォールバック)がサポートされていない
+  %% \terminalCMD{Mxdvi}、% メンテナンスされておらず入手困難
+  %% \terminalCMD{xdvi}、% 日本語サポートが途絶えている
+  %% および
+  \terminalCMD{dvips}、
+  %% \terminalCMD{udvips}、% メンテナンスされておらず入手困難
+  {\dvipdfmx}
   \item 依存パッケージ
   \begin{itemize}[labelsep=0.3zw]
     \item \pkg+{keyval}
