@@ -275,6 +275,9 @@
     },
     {
       "name": "urltab"
+    },
+    {
+      "name": "versionWarn"
     }
   ],
   "envs": [

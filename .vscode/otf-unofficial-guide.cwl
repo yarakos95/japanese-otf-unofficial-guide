@@ -72,4 +72,5 @@
 \upLaTeXdvipdfmx
 \upLaTeXdvipdfmx*
 \urltab
+\versionWarn
 \氏
