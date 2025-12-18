@@ -59,12 +59,13 @@ if [ $# -gt 0 ]; then
         fi
 
         run_latexmk "$TARGET"
-        clean_aux_files "$TARGET"
 
         PDFFILE="${TARGET%.tex}.pdf"
 
         info_msg "Moving: $PDFFILE to $TOPDIR"
         mv "$PDFFILE" "$TOPDIR"/
+
+        clean_aux_files "$TARGET"
     done
     exit 0
 else
@@ -73,12 +74,13 @@ else
     for key in "${DEFAULT_KEYS[@]}"; do
         TARGET="${FILE_MAP[$key]}"
         run_latexmk "$TARGET"
-        clean_aux_files "$TARGET"
 
         PDFFILE="${TARGET%.tex}.pdf"
 
         info_msg "Moving $PDFFILE to $TOPDIR"
         mv "$PDFFILE" "$TOPDIR"/
+
+        clean_aux_files "$TARGET"
     done
 fi
 
