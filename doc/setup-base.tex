@@ -4,6 +4,7 @@
 \DeclareEmphSequence{\usefont{T1}{lmr}{b}{n}\usefont{JY2}{hgt}{m}{n}\selectfont,\usefont{T1}{lmr}{b}{it}\usefont{JY2}{hgt}{b}{n}\selectfont}
 \pretocmd{\sidenote}{\<\eghostguarded{}}{}{}
 \pretocmd{\_}{\allowbreak}{}{}
+\pretocmd{\texttimes}{\allowbreak}{}{}
 
 \newcommand{\docDate}{Ver.1.1［2025年12月19日］}
 \newcommand{\otfVersion}{2025-07-24 TeX JP org, v1.7b8 psitau, u0.32 ttk}
@@ -78,7 +79,7 @@
 
 \NewDocumentEnvironment{booktabular}{ m s }{\begin{tabular}[t]{#1}\toprule}{\bottomrule\end{tabular}}
 \NewExpandableDocumentCommand{\thead}{ O{1} m }{\multicolumn{#1}{c}{\small\sffamily\gtfamily #2}}
-\NewDocumentCommand{\textlrangle}{ s m }{{\rmfamily\mdseries\textlangle\nobreak\IfBooleanTF{#1}{\jpincmd{#2}}{#2}\nobreak\textrangle}}
+\NewDocumentCommand{\textlrangle}{ s m }{\IfBooleanTF{#1}{\eghostguarded{{\rmfamily\mdseries\textlangle\nobreak #2\nobreak\textrangle}}}{{\rmfamily\mdseries\textlangle\nobreak #2\nobreak\textrangle}}}
 \NewDocumentCommand{\jpincmd}{ s m }{\IfBooleanT{#1}{\inhibitkanjiskip}{\jafontsize{8.5pt}{15pt}\selectfont #2}\IfBooleanT{#1}{\inhibitkanjiskip}}
 \newcommand{\inhibitkanjiskip}{\mbox{}}
 \newcommand{\terminalCMD}[1]{\texttt{#1}}
