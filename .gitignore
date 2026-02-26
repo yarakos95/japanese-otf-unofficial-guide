@@ -2,6 +2,7 @@ test/
 Adobe-Japan1-7.pdf
 otfmanual.pdf
 doc/*.pdf
+doc/*/*.pdf
 settings.json
 TeXAdoventCallender.md
 
