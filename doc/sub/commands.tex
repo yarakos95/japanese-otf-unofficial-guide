@@ -140,7 +140,7 @@
 \end{itemize}
 
 これらに加えて、\cmd{UTFM}があります。これは和文のフォントにグリフが含まれない場合、他のスクリプトのフォントにグリフがあれば{\fantizi}\,→\,{\jiantizi}\,→\,{\hankgo}の順で使われるようになります。（結果を見ないとどのような出力になるのか不定なので注意が必要です）
-\sidenote{\cmd{UTFM}はsubfont方式、2書体となっているため、\opt{deluxe}の影響を受けません。この問題に関しては\icon{github}\href{https://github.com/texjporg/japanese-otf-mirror/issues/31}{\textsf{texjporg/{\allowbreak}japanese-{\allowbreak}otf-{\allowbreak}mirror} \#31}でこの方式の変更提起がなされています。}
+% \sidenote{\cmd{UTFM}はsubfont方式、2書体となっているため、\opt{deluxe}の影響を受けません。この問題に関しては\icon{github}\href{https://github.com/texjporg/japanese-otf-mirror/issues/31}{\textsf{texjporg/{\allowbreak}japanese-{\allowbreak}otf-{\allowbreak}mirror} \#31}でこの方式の変更提起がなされています。}
 
 
 他方で、\cmd{CID}のバリエーションコマンドに入力するCID値は、それぞれのスクリプトのものに依存します。そのため、{\fantizi}は``{\ptmfamily Adobe-CNS1-7}''、{\jiantizi}は``{\ptmfamily Adobe-GB1-5}''、{\hankgo}は``{\ptmfamily Adobe-Korea1-2}'' \sidenote{{\hankgo}のROSにはAdobe-KR-9もあります。このROSは最終更新が1998年のAdobe-Korea1-2よりも新しいROSですが、\pkg*{japanese-otf}ではAdobe-Korea1-2であることに注意してください。}
